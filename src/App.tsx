@@ -6,6 +6,7 @@ import {
   Plus,
 } from "lucide-react";
 import ParticleField from "@/components/ParticleField";
+import Waitlist from "./Waitlist";
 import "./App.css";
 
 const audiences = [
@@ -52,21 +53,21 @@ const toolkit = [
 
 const stories = [
   {
-    dateline: "Brooklyn · Member dispatch 004",
+    dateline: "Brooklyn · Dispatch 004",
     title: "A 60-guest dinner, one operator, zero spreadsheets",
     excerpt:
       "How one founding team used the toolkit to plan, confirm, and debrief a closed-door fintech dinner in under four hours of human time — and sourced $2.4M in pipeline.",
     read: "6 min read",
   },
   {
-    dateline: "San Francisco · Member dispatch 003",
+    dateline: "San Francisco · Dispatch 003",
     title: "The pre-event week, compressed",
     excerpt:
       "We tore apart the 14-day runway before a developer summit and mapped exactly where agents earn their keep — and where the event marketer still has to lead.",
     read: "9 min read",
   },
   {
-    dateline: "Remote · Member dispatch 002",
+    dateline: "Remote · Dispatch 002",
     title: "Proving ROI on events your CFO can actually feel",
     excerpt:
       "A working note on attribution, the limits of the CRM, and the simple pipeline-multiple read-out that's saved more than one event budget this quarter.",
@@ -75,6 +76,14 @@ const stories = [
 ];
 
 export default function App() {
+  const path =
+    typeof window !== "undefined" ? window.location.pathname : "/";
+  const isWaitlist = path === "/waitlist" || path === "/waitlist/";
+
+  if (isWaitlist) {
+    return <Waitlist />;
+  }
+
   return (
     <div className="min-h-screen bg-paper text-ink font-sans antialiased overflow-x-hidden">
       <Nav />
@@ -110,15 +119,15 @@ function Nav() {
           <a className="hover:text-ink transition-colors" href="#field">
             From the field
           </a>
-          <a className="hover:text-ink transition-colors" href="#about">
-            About
+          <a className="hover:text-ink transition-colors" href="#join">
+            Join
           </a>
         </nav>
         <a
-          href="#apply"
+          href="#join"
           className="hidden md:inline-flex items-center gap-2 text-sm border border-ink/80 px-4 py-2 hover:bg-ink hover:text-paper transition-colors"
         >
-          Apply to join
+          Get the Starter Kit
           <ArrowUpRight className="w-4 h-4" />
         </a>
       </div>
@@ -175,8 +184,9 @@ function Hero() {
           </p>
 
           <p className="mt-6 max-w-md text-[15px] text-ink-muted leading-relaxed">
-            A private club for event marketers learning to plan, execute, and
-            prove ROI on every event — with AI doing the chores.
+            The toolkit, playbooks, and prompts event marketers are using to
+            plan, fill, and prove ROI on every event — with AI doing the
+            chores.
           </p>
 
           <div className="mt-12 flex flex-wrap items-center gap-6">
@@ -272,10 +282,10 @@ function AudienceSection() {
             The people holding the calendar, the room, and the group chat.
           </h2>
           <p className="mt-6 text-ink-soft leading-relaxed max-w-md">
-            Agent Assembly is a private club for event marketers — the people
-            who still, against all odds, believe in showing up. Members swap
-            workflows, tear each other's events apart, and share the prompts
-            that actually moved pipeline.
+            Agent Assembly is for event marketers — the people who still,
+            against all odds, believe in showing up. We ship the workflows,
+            prompts, and tools that actually moved pipeline, and we run
+            Build Nights so you're not figuring it out alone.
           </p>
         </div>
 
@@ -312,7 +322,7 @@ function ToolkitGrid() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
           <div>
             <div className="text-xs uppercase tracking-[0.22em] text-ink-muted mb-6">
-              02 — What members get
+              02 — The toolkit
             </div>
             <h2 className="font-semibold tracking-tightest leading-[0.95] text-4xl md:text-6xl max-w-3xl">
               Four layers.{" "}
@@ -320,9 +330,9 @@ function ToolkitGrid() {
             </h2>
           </div>
           <p className="max-w-sm text-ink-soft leading-relaxed">
-            Members get the whole toolkit on day one. Every workflow, prompt,
-            and micro-tool is stress-tested at real dinners, summits, and
-            field days before it ships.
+            Every workflow, prompt, and micro-tool is stress-tested at real
+            dinners, summits, and field days before we ship it. Priced so one
+            saved event pays for all of them.
           </p>
         </div>
 
@@ -347,6 +357,47 @@ function ToolkitGrid() {
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-0 border-t border-ink/20 pt-10 md:pt-14">
+          <div className="md:pr-10 md:border-r md:border-ink/15">
+            <div className="flex items-baseline gap-3 text-xs uppercase tracking-[0.22em] text-ink-muted">
+              <span>Starter Kit</span>
+              <span className="h-px flex-1 bg-ink/15" />
+              <span className="font-mono text-ink">$49</span>
+            </div>
+            <p className="mt-4 text-ink-soft leading-relaxed max-w-md">
+              Five plug-and-play workflows, the prompt pack, the Event ROI
+              Calculator, and an invite to the next Build Night. One-time.
+              No subscription.
+            </p>
+            <a
+              href="#join"
+              className="mt-6 inline-flex items-center gap-2 bg-ink text-paper px-5 py-3 text-[14px] tracking-tight hover:bg-lavender transition-colors"
+            >
+              Get the Starter Kit
+              <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+          <div className="md:pl-10">
+            <div className="flex items-baseline gap-3 text-xs uppercase tracking-[0.22em] text-ink-muted">
+              <span>Pro</span>
+              <span className="h-px flex-1 bg-ink/15" />
+              <span className="font-mono text-ink">$15 / mo</span>
+            </div>
+            <p className="mt-4 text-ink-soft leading-relaxed max-w-md">
+              New workflows every month, every Build Night, the full back
+              catalogue of field notes, and a shared room with the rest of
+              the operators figuring this out in real time.
+            </p>
+            <a
+              href="#join"
+              className="mt-6 inline-flex items-center gap-2 text-[14px] border-b border-ink pb-1 hover:text-lavender hover:border-lavender transition-colors"
+            >
+              Join Pro
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -581,7 +632,7 @@ function FieldNotes() {
               04 — From the field
             </div>
             <h2 className="font-semibold tracking-tightest leading-[0.95] text-4xl md:text-6xl max-w-3xl">
-              Member dispatches from rooms where the work actually happened.
+              Dispatches from rooms where the work actually happened.
             </h2>
           </div>
           <a
@@ -625,7 +676,7 @@ function FieldNotes() {
 
 function Footer() {
   return (
-    <footer id="apply" className="relative bg-paper overflow-hidden">
+    <footer id="join" className="relative bg-paper overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <ParticleField
           gradient="bottom-up"
@@ -650,9 +701,9 @@ function Footer() {
               <span className="text-lavender">the machinery</span>.
             </h2>
             <p className="mt-8 max-w-md text-ink-soft leading-relaxed">
-              Agent Assembly is a private club for event marketers learning
-              AI. Closed applications right now. If you host, tell us what
-              you're running — we read every one.
+              Drop your email. You'll get a free workflow from the Starter
+              Kit, an invite to the next Build Night, and one dispatch a
+              month from the field. No drip campaigns.
             </p>
           </div>
 
@@ -661,7 +712,7 @@ function Footer() {
             onSubmit={(e) => e.preventDefault()}
           >
             <label className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-              Apply to join the club
+              Get the free workflow + invite
             </label>
             <div className="flex border border-ink bg-paper">
               <input
@@ -673,12 +724,12 @@ function Footer() {
                 type="submit"
                 className="px-5 py-4 bg-ink text-paper text-[13px] uppercase tracking-[0.22em] hover:bg-lavender transition-colors inline-flex items-center gap-2"
               >
-                Apply
+                Send it
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
             <p className="text-xs text-ink-muted">
-              No drip campaigns. One member dispatch a month, maybe.
+              Prefer the full Starter Kit? $49, one-time — no subscription.
             </p>
           </form>
         </div>
@@ -693,8 +744,8 @@ function Footer() {
             items={["From the field", "Playbooks", "Glossary"]}
           />
           <FooterCol
-            title="Club"
-            items={["About", "Manifesto", "Build Nights", "Contact"]}
+            title="Shop"
+            items={["Starter Kit · $49", "Pro · $15/mo", "Build Nights", "Contact"]}
           />
           <FooterCol
             title="Elsewhere"
