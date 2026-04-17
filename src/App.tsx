@@ -10,13 +10,13 @@ import "./App.css";
 
 const audiences = [
   "Event marketers",
-  "Field teams",
+  "Field marketers",
   "Community builders",
   "Developer advocates",
   "Conference producers",
   "Founders who host",
   "Chiefs of staff",
-  "Programming leads",
+  "Program managers",
 ];
 
 const toolkit = [
@@ -24,52 +24,52 @@ const toolkit = [
     label: "01",
     title: "Workflows",
     description:
-      "Opinionated playbooks for the chaos before doors open — outreach, confirms, comms, and follow-through.",
+      "Battle-tested playbooks for planning dinners, summits, and field days — outreach, confirms, comms, run-of-show.",
     meta: "17 workflows",
   },
   {
     label: "02",
     title: "Templates",
     description:
-      "Run-of-show, guest lists, venue briefs, and post-event debriefs. Editable. Opinionated. Shippable.",
+      "Prompt packs and Notion templates for invites, guest targeting, venue briefs, and post-event debriefs.",
     meta: "42 templates",
   },
   {
     label: "03",
     title: "Tools",
     description:
-      "Small, sharp agents that do one thing well — calculate ROI, draft invites, match guests, write recaps.",
+      "Small, sharp micro-tools that do one thing well — Event ROI Calculator, Exec Dinner Builder, Pipeline Tracker.",
     meta: "9 tools",
   },
   {
     label: "04",
-    title: "Systems",
+    title: "Build Nights",
     description:
-      "Connect the Notion, the CRM, the calendar, and the inbox so the team runs on one shared memory.",
-    meta: "Integrations inside",
+      "Members-only live sessions where we all build the same thing together — an exec dinner, a booth, an outreach campaign.",
+    meta: "Weekly, online",
   },
 ];
 
 const stories = [
   {
-    dateline: "Brooklyn · Dispatch 004",
-    title: "A 60-guest dinner, one chief of staff, zero spreadsheets",
+    dateline: "Brooklyn · Member dispatch 004",
+    title: "A 60-guest dinner, one operator, zero spreadsheets",
     excerpt:
-      "How an AI agency's founding team used Agent Assembly to plan, confirm, and debrief a closed-door dinner in under four hours of human time.",
+      "How one founding team used the toolkit to plan, confirm, and debrief a closed-door fintech dinner in under four hours of human time — and sourced $2.4M in pipeline.",
     read: "6 min read",
   },
   {
-    dateline: "San Francisco · Dispatch 003",
+    dateline: "San Francisco · Member dispatch 003",
     title: "The pre-event week, compressed",
     excerpt:
-      "We tore apart the 14-day runway before a developer summit and mapped exactly where agents earn their keep — and where people still must lead.",
+      "We tore apart the 14-day runway before a developer summit and mapped exactly where agents earn their keep — and where the event marketer still has to lead.",
     read: "9 min read",
   },
   {
-    dateline: "Remote · Dispatch 002",
-    title: "On measuring pipeline you can actually feel",
+    dateline: "Remote · Member dispatch 002",
+    title: "Proving ROI on events your CFO can actually feel",
     excerpt:
-      "A field note on attribution, the limits of the CRM, and why the best follow-up is still a human one written ten minutes after the handshake.",
+      "A working note on attribution, the limits of the CRM, and the simple pipeline-multiple read-out that's saved more than one event budget this quarter.",
     read: "5 min read",
   },
 ];
@@ -115,10 +115,10 @@ function Nav() {
           </a>
         </nav>
         <a
-          href="#featured"
+          href="#apply"
           className="hidden md:inline-flex items-center gap-2 text-sm border border-ink/80 px-4 py-2 hover:bg-ink hover:text-paper transition-colors"
         >
-          Get early access
+          Apply to join
           <ArrowUpRight className="w-4 h-4" />
         </a>
       </div>
@@ -156,11 +156,6 @@ function Hero() {
       <div className="mx-auto max-w-7xl px-6 md:px-10 pt-14 md:pt-24 pb-16 md:pb-28 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         {/* LEFT / TEXT */}
         <div className="lg:col-span-7 relative z-10">
-          <div className="flex items-center gap-4 text-xs uppercase tracking-[0.22em] text-ink-muted mb-10">
-            <span className="h-px w-10 bg-ink-muted/70" />
-            <span>Issue No. 01 · Spring 2026</span>
-          </div>
-
           <h1 className="font-semibold tracking-tightest leading-[0.92] text-[56px] sm:text-7xl md:text-8xl lg:text-[104px]">
             AI for people
             <br />
@@ -179,6 +174,11 @@ function Hero() {
             <span className="text-ink"> Run the moment.</span>
           </p>
 
+          <p className="mt-6 max-w-md text-[15px] text-ink-muted leading-relaxed">
+            A private club for event marketers learning to plan, execute, and
+            prove ROI on every event — with AI doing the chores.
+          </p>
+
           <div className="mt-12 flex flex-wrap items-center gap-6">
             <a
               href="#featured"
@@ -194,12 +194,6 @@ function Hero() {
               Read from the field →
             </a>
           </div>
-
-          <dl className="mt-16 md:mt-20 grid grid-cols-3 gap-6 md:gap-10 max-w-xl border-t border-ink/15 pt-8">
-            <Stat k="4.1x" v="Avg. pipeline multiple" />
-            <Stat k="11 hrs" v="Saved per event" />
-            <Stat k="300+" v="Events run on it" />
-          </dl>
         </div>
 
         {/* RIGHT / VISUAL */}
@@ -264,19 +258,6 @@ function Hero() {
   );
 }
 
-function Stat({ k, v }: { k: string; v: string }) {
-  return (
-    <div>
-      <div className="text-2xl md:text-3xl font-semibold tracking-tight">
-        {k}
-      </div>
-      <div className="mt-1 text-xs uppercase tracking-[0.18em] text-ink-muted">
-        {v}
-      </div>
-    </div>
-  );
-}
-
 /* ---------- Audience ---------- */
 
 function AudienceSection() {
@@ -285,14 +266,16 @@ function AudienceSection() {
       <div className="mx-auto max-w-7xl px-6 md:px-10 py-20 md:py-28 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
         <div className="lg:col-span-4">
           <div className="text-xs uppercase tracking-[0.22em] text-ink-muted mb-6">
-            01 — Built for
+            01 — Who it's for
           </div>
           <h2 className="font-semibold tracking-tightest leading-[0.95] text-4xl md:text-5xl">
             The people holding the calendar, the room, and the group chat.
           </h2>
           <p className="mt-6 text-ink-soft leading-relaxed max-w-md">
-            Agent Assembly is a working system for the humans who still,
-            against all odds, believe in showing up.
+            Agent Assembly is a private club for event marketers — the people
+            who still, against all odds, believe in showing up. Members swap
+            workflows, tear each other's events apart, and share the prompts
+            that actually moved pipeline.
           </p>
         </div>
 
@@ -329,16 +312,17 @@ function ToolkitGrid() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
           <div>
             <div className="text-xs uppercase tracking-[0.22em] text-ink-muted mb-6">
-              02 — The toolkit
+              02 — What members get
             </div>
             <h2 className="font-semibold tracking-tightest leading-[0.95] text-4xl md:text-6xl max-w-3xl">
-              Four layers. <span className="text-lavender">One</span> shared
-              memory.
+              Four layers.{" "}
+              <span className="text-lavender">Battle-tested</span> by the room.
             </h2>
           </div>
           <p className="max-w-sm text-ink-soft leading-relaxed">
-            Start anywhere. Stack them together and the whole thing begins to
-            feel less like software and more like a very organised colleague.
+            Members get the whole toolkit on day one. Every workflow, prompt,
+            and micro-tool is stress-tested at real dinners, summits, and
+            field days before it ships.
           </p>
         </div>
 
@@ -396,9 +380,10 @@ function FeaturedTool() {
             Event ROI Calculator
           </h2>
           <p className="mt-6 text-lg text-ink-soft leading-relaxed max-w-md">
-            A small calculator for a large question. Punch in the spend, the
-            guests, the pipeline. See what the room was actually worth — and
-            what it could be worth next time.
+            The question every CFO asks and most event teams can't answer.
+            Punch in the spend, the guests, the pipeline. Get the multiple,
+            the read-out, and the line your team can actually send to
+            finance.
           </p>
           <ul className="mt-8 space-y-3 text-[15px] text-ink-soft">
             <li className="flex gap-3">
@@ -411,7 +396,7 @@ function FeaturedTool() {
             </li>
             <li className="flex gap-3">
               <span className="text-lavender">◆</span>
-              Shareable read-out for the team Slack
+              Shareable read-out for the team Slack — and your CFO
             </li>
           </ul>
           <a
@@ -596,7 +581,7 @@ function FieldNotes() {
               04 — From the field
             </div>
             <h2 className="font-semibold tracking-tightest leading-[0.95] text-4xl md:text-6xl max-w-3xl">
-              Dispatches from rooms where the work actually happened.
+              Member dispatches from rooms where the work actually happened.
             </h2>
           </div>
           <a
@@ -640,7 +625,7 @@ function FieldNotes() {
 
 function Footer() {
   return (
-    <footer id="about" className="relative bg-paper overflow-hidden">
+    <footer id="apply" className="relative bg-paper overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <ParticleField
           gradient="bottom-up"
@@ -659,15 +644,15 @@ function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 mb-20">
           <div className="lg:col-span-7">
             <h2 className="font-semibold tracking-tightest leading-[0.95] text-4xl md:text-6xl max-w-2xl">
-              Bring the room.
+              You bring the room.
               <br />
               We'll bring{" "}
               <span className="text-lavender">the machinery</span>.
             </h2>
             <p className="mt-8 max-w-md text-ink-soft leading-relaxed">
-              Agent Assembly is in closed beta with a small cohort of event
-              marketers, field teams, and community builders. Leave a note —
-              we read every one.
+              Agent Assembly is a private club for event marketers learning
+              AI. Closed applications right now. If you host, tell us what
+              you're running — we read every one.
             </p>
           </div>
 
@@ -676,7 +661,7 @@ function Footer() {
             onSubmit={(e) => e.preventDefault()}
           >
             <label className="text-xs uppercase tracking-[0.22em] text-ink-muted">
-              Request early access
+              Apply to join the club
             </label>
             <div className="flex border border-ink bg-paper">
               <input
@@ -688,12 +673,12 @@ function Footer() {
                 type="submit"
                 className="px-5 py-4 bg-ink text-paper text-[13px] uppercase tracking-[0.22em] hover:bg-lavender transition-colors inline-flex items-center gap-2"
               >
-                Request
+                Apply
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
             <p className="text-xs text-ink-muted">
-              No drip campaigns. One dispatch a month, maybe.
+              No drip campaigns. One member dispatch a month, maybe.
             </p>
           </form>
         </div>
@@ -708,8 +693,8 @@ function Footer() {
             items={["From the field", "Playbooks", "Glossary"]}
           />
           <FooterCol
-            title="Company"
-            items={["About", "Manifesto", "Contact"]}
+            title="Club"
+            items={["About", "Manifesto", "Build Nights", "Contact"]}
           />
           <FooterCol
             title="Elsewhere"
@@ -717,12 +702,9 @@ function Footer() {
           />
         </div>
 
-        <div className="mt-16 pt-6 border-t border-ink/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs uppercase tracking-[0.22em] text-ink-muted">
-          <div className="flex items-center gap-3">
-            <LogoMark />
-            <span>Agent Assembly · Est. 2026</span>
-          </div>
-          <div>An editorial system for people who bring people together.</div>
+        <div className="mt-16 pt-6 border-t border-ink/20 flex items-center gap-3 text-xs uppercase tracking-[0.22em] text-ink-muted">
+          <LogoMark />
+          <span>Agent Assembly · Est. 2026</span>
         </div>
       </div>
     </footer>

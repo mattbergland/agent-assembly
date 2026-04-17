@@ -207,7 +207,10 @@ export default function ParticleField({
     // paint one frame even if reduced motion
     tick();
 
-    const ro = new ResizeObserver(() => resize());
+    const ro = new ResizeObserver(() => {
+      resize();
+      if (reduceMotion) tick();
+    });
     ro.observe(canvas);
 
     return () => {
