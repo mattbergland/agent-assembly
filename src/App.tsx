@@ -117,7 +117,7 @@ function Nav() {
             Tools
           </a>
           <a className="hover:text-ink transition-colors" href="#field">
-            From the field
+            Field Notes
           </a>
           <a className="hover:text-ink transition-colors" href="#join">
             Join
@@ -201,7 +201,7 @@ function Hero() {
               href="#field"
               className="text-sm text-ink-soft border-b border-ink/40 pb-1 hover:text-ink hover:border-ink transition-colors"
             >
-              Read from the field →
+              Read the field notes →
             </a>
           </div>
         </div>
@@ -620,7 +620,7 @@ function Metric({
   );
 }
 
-/* ---------- From the field ---------- */
+/* ---------- Field Notes ---------- */
 
 function FieldNotes() {
   return (
@@ -629,7 +629,7 @@ function FieldNotes() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
           <div>
             <div className="text-xs uppercase tracking-[0.22em] text-ink-muted mb-6">
-              04 — From the field
+              04 — Field Notes
             </div>
             <h2 className="font-semibold tracking-tightest leading-[0.95] text-4xl md:text-6xl max-w-3xl">
               Dispatches from rooms where the work actually happened.
@@ -741,7 +741,7 @@ function Footer() {
           />
           <FooterCol
             title="Writing"
-            items={["From the field", "Playbooks", "Glossary"]}
+            items={["Field Notes", "Playbooks", "Glossary"]}
           />
           <FooterCol
             title="Shop"
