@@ -74,27 +74,26 @@ function Main() {
           chores.
         </p>
 
-        <nav className="flex items-center gap-3 mt-6 text-sm">
-          <a
-            href="#toolkit"
-            className="text-ink-muted hover:text-ink transition-colors"
-          >
-            Toolkit
-          </a>
-          <span className="text-ink-muted/40">/</span>
-          <a
-            href="#field"
-            className="text-ink-muted hover:text-ink transition-colors"
-          >
-            Field Notes
-          </a>
-          <span className="text-ink-muted/40">/</span>
-          <a
-            href="#join"
-            className="text-ink-muted hover:text-ink transition-colors"
-          >
-            Join
-          </a>
+        <nav className="flex flex-col gap-2 mt-6 w-full">
+          {[
+            { href: "#toolkit", label: "Toolkit", num: "01" },
+            { href: "#field", label: "Field Notes", num: "02" },
+            { href: "#join", label: "Join", num: "03" },
+          ].map((link) => (
+            <a
+              key={link.num}
+              href={link.href}
+              className="group flex items-center gap-3 py-1.5 text-sm text-ink-muted hover:text-ink transition-all"
+            >
+              <span className="text-[11px] font-mono text-lavender opacity-60 group-hover:opacity-100 transition-opacity">
+                {link.num}
+              </span>
+              <span className="h-px w-4 bg-ink-muted/25 group-hover:w-6 group-hover:bg-lavender transition-all" />
+              <span className="group-hover:translate-x-0.5 transition-transform">
+                {link.label}
+              </span>
+            </a>
+          ))}
         </nav>
       </div>
     </main>
