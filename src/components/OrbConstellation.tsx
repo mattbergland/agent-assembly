@@ -63,12 +63,30 @@ function gaussRand(): number {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
-const INK = [0.067, 0.067, 0.067] as const; // #111
-const LAV = [0.557, 0.49, 0.745] as const; // #8E7DBE
+// Region color palette (from 3D reference model)
+const WOOD = [0.24, 0.17, 0.12] as const;      // dark walnut rods
+const WOOD_LT = [0.30, 0.22, 0.15] as const;   // lighter wood highlights
+const LEATHER = [0.58, 0.36, 0.22] as const;   // warm leather straps
+const LEATHER_DK = [0.48, 0.28, 0.16] as const; // darker leather
+const METAL = [0.52, 0.52, 0.44] as const;     // patinated axe blade
+const METAL_DK = [0.42, 0.43, 0.36] as const;  // darker metal edge
+const IRON = [0.18, 0.14, 0.10] as const;      // dark iron pole
 
-function mkParticle(x: number, y: number, sizeMul = 1): Particle {
-  const isAccent = Math.random() < 0.15;
-  const [r, g, b] = isAccent ? LAV : INK;
+type Rgb = readonly [number, number, number];
+
+function lerpColor(a: Rgb, b: Rgb, t: number): Rgb {
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+}
+
+function mkParticle(
+  x: number,
+  y: number,
+  sizeMul: number,
+  baseColor: Rgb,
+  altColor?: Rgb,
+): Particle {
+  const t = altColor ? Math.random() : 0;
+  const [r, g, b] = altColor ? lerpColor(baseColor, altColor, t) : baseColor;
   return {
     homeX: x,
     homeY: y,
@@ -77,9 +95,7 @@ function mkParticle(x: number, y: number, sizeMul = 1): Particle {
     vx: 0,
     vy: 0,
     size: (Math.random() * 4.0 + 1.8) * sizeMul,
-    opacity: isAccent
-      ? Math.random() * 0.25 + 0.75
-      : Math.random() * 0.35 + 0.6,
+    opacity: Math.random() * 0.3 + 0.7,
     phase: Math.random() * Math.PI * 2,
     colorR: r,
     colorG: g,
@@ -90,118 +106,116 @@ function mkParticle(x: number, y: number, sizeMul = 1): Particle {
 function generateConstellation(count: number): Particle[] {
   const particles: Particle[] = [];
 
+  // Scale factor — makes everything ~2.2× bigger
+  const S = 2.2;
+
   // Bundle dimensions (matched to 3D reference model)
-  const bundleRadius = 0.065;
-  const rodTop = 0.42;
-  const rodBot = -0.44;
+  const bundleRadius = 0.065 * S;
+  const rodTop = 0.42 * S;
+  const rodBot = -0.44 * S;
 
   // Rod centers: hexagonal packing (~13 rods)
   const rodCenters: [number, number][] = [];
-  const rodR = 0.018;
-  // Center rod
+  const rodR = 0.018 * S;
   rodCenters.push([0, 0]);
-  // Inner ring (6 rods)
   for (let i = 0; i < 6; i++) {
     const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
     rodCenters.push([Math.cos(a) * rodR * 2, Math.sin(a) * rodR * 2]);
   }
-  // Partial outer ring (6 more rods filling gaps)
   for (let i = 0; i < 6; i++) {
     const a = (i / 6) * Math.PI * 2;
     rodCenters.push([Math.cos(a) * rodR * 3.6, Math.sin(a) * rodR * 3.6]);
   }
 
-  // Rods: 45% of particles
-  const rodN = Math.floor(count * 0.45);
+  // Rods: 42% — dark wood colored
+  const rodN = Math.floor(count * 0.42);
   const perRod = Math.floor(rodN / rodCenters.length);
   for (const [cx, cy] of rodCenters) {
     for (let i = 0; i < perRod; i++) {
       const t = i / (perRod - 1);
       const y = rodBot + t * (rodTop - rodBot);
-      const x = cx + gaussRand() * 0.003;
+      const x = cx + gaussRand() * 0.003 * S;
       const yJitter = cy * 0.15;
-      particles.push(mkParticle(x, y + yJitter, 0.55 + Math.random() * 0.4));
+      particles.push(
+        mkParticle(x, y + yJitter, 0.55 + Math.random() * 0.4, WOOD, WOOD_LT),
+      );
     }
   }
 
-  // Central pole: 5% — extends above and below bundle
+  // Central pole: 5% — dark iron
   const poleN = Math.floor(count * 0.05);
-  const poleTop = 0.52;
-  const poleBot = -0.54;
+  const poleTop = 0.54 * S;
+  const poleBot = -0.56 * S;
   for (let i = 0; i < poleN; i++) {
     const t = Math.random();
     const y = poleBot + t * (poleTop - poleBot);
-    const x = gaussRand() * 0.003;
-    particles.push(mkParticle(x, y, 0.3 + Math.random() * 0.3));
+    const x = gaussRand() * 0.003 * S;
+    particles.push(mkParticle(x, y, 0.3 + Math.random() * 0.3, IRON));
   }
 
-  // X-pattern leather bindings: 18% — criss-cross wraps
+  // Spiral leather binding: 18% — continuous helix wrapping the bundle
   const bindN = Math.floor(count * 0.18);
-  const bandCenters = [-0.30, -0.10, 0.10, 0.30];
-  const bandHeight = 0.10;
-  const perBand = Math.floor(bindN / bandCenters.length);
-  for (const by of bandCenters) {
-    for (let i = 0; i < perBand; i++) {
-      const t = Math.random() * 2 - 1;
-      const xSpread = bundleRadius + 0.015;
-      const halfH = bandHeight / 2;
-      // X-pattern: two diagonal lines crossing
-      if (Math.random() < 0.5) {
-        const x = t * xSpread;
-        const y = by + t * halfH + gaussRand() * 0.006;
-        particles.push(mkParticle(x, y, 0.5 + Math.random() * 0.35));
-      } else {
-        const x = t * xSpread;
-        const y = by - t * halfH + gaussRand() * 0.006;
-        particles.push(mkParticle(x, y, 0.5 + Math.random() * 0.35));
-      }
-    }
+  const helixTurns = 5;
+  const helixTop = rodTop - 0.04 * S;
+  const helixBot = rodBot + 0.04 * S;
+  for (let i = 0; i < bindN; i++) {
+    const t = Math.random();
+    const y = helixBot + t * (helixTop - helixBot);
+    const angle = t * helixTurns * Math.PI * 2;
+    const strapW = bundleRadius + 0.012 * S;
+    const x = Math.sin(angle) * strapW + gaussRand() * 0.006 * S;
+    particles.push(
+      mkParticle(x, y, 0.5 + Math.random() * 0.35, LEATHER, LEATHER_DK),
+    );
   }
 
-  // Top and bottom cap bands: 4%
+  // Top and bottom cap bands: 4% — leather colored
   const capN = Math.floor(count * 0.04);
-  const capYs = [rodTop - 0.01, rodBot + 0.01];
+  const capYs = [rodTop - 0.01 * S, rodBot + 0.01 * S];
   const perCap = Math.floor(capN / capYs.length);
   for (const cy of capYs) {
     for (let i = 0; i < perCap; i++) {
-      const x = (Math.random() - 0.5) * (bundleRadius * 2 + 0.02);
-      const y = cy + gaussRand() * 0.008;
-      particles.push(mkParticle(x, y, 0.55 + Math.random() * 0.3));
+      const x = (Math.random() - 0.5) * (bundleRadius * 2 + 0.02 * S);
+      const y = cy + gaussRand() * 0.008 * S;
+      particles.push(
+        mkParticle(x, y, 0.55 + Math.random() * 0.3, LEATHER_DK, LEATHER),
+      );
     }
   }
 
-  // Axe blade: 18% — wide crescent on right side, upper third
-  const axeN = Math.floor(count * 0.18);
-  const bladeTop = 0.38;
-  const bladeBot = 0.06;
+  // Axe blade: 20% — grey-green metal, wide crescent on right side
+  const axeN = Math.floor(count * 0.20);
+  const bladeTop = 0.40 * S;
+  const bladeBot = 0.04 * S;
   const bladeCenter = (bladeTop + bladeBot) / 2;
   const bladeHalf = (bladeTop - bladeBot) / 2;
   for (let i = 0; i < axeN; i++) {
     const t = Math.random() * 2 - 1;
     const y = bladeCenter + t * bladeHalf;
     const normT = Math.abs(t);
-    const maxW = 0.14;
+    const maxW = 0.16 * S;
     const edgeCurve = Math.sqrt(1 - normT * normT);
-    const w =
-      maxW * edgeCurve * (0.65 + 0.35 * Math.random());
-    const x = bundleRadius + 0.008 + w;
-    particles.push(mkParticle(x, y, 0.45 + Math.random() * 0.4));
+    const w = maxW * edgeCurve * (0.65 + 0.35 * Math.random());
+    const x = bundleRadius + 0.006 * S + w;
+    particles.push(
+      mkParticle(x, y, 0.50 + Math.random() * 0.4, METAL, METAL_DK),
+    );
   }
 
-  // Axe handle/neck connecting blade to bundle
+  // Axe handle/neck: 2%
   const neckN = Math.floor(count * 0.02);
   for (let i = 0; i < neckN; i++) {
-    const y = bladeCenter + gaussRand() * 0.02;
-    const x = bundleRadius + Math.random() * 0.008;
-    particles.push(mkParticle(x, y, 0.4 + Math.random() * 0.3));
+    const y = bladeCenter + gaussRand() * 0.02 * S;
+    const x = bundleRadius + Math.random() * 0.008 * S;
+    particles.push(mkParticle(x, y, 0.4 + Math.random() * 0.3, IRON));
   }
 
-  // Sparse atmospheric particles
+  // Sparse atmospheric particles: remainder
   const restN = count - particles.length;
   for (let i = 0; i < restN; i++) {
-    const x = (Math.random() - 0.5) * 0.4;
-    const y = (Math.random() - 0.5) * 1.2;
-    particles.push(mkParticle(x, y, 0.2));
+    const x = (Math.random() - 0.5) * 0.5 * S;
+    const y = (Math.random() - 0.5) * 1.3 * S;
+    particles.push(mkParticle(x, y, 0.2, WOOD));
   }
 
   return particles;
@@ -222,9 +236,9 @@ function compileShader(
 
 /* ── Component ─────────────────────────────────────────────── */
 
-const PARTICLE_COUNT = 900;
-const DISPERSE_RADIUS = 0.32;
-const DISPERSE_FORCE = 0.045;
+const PARTICLE_COUNT = 1200;
+const DISPERSE_RADIUS = 0.55;
+const DISPERSE_FORCE = 0.04;
 const SPRING = 0.012;
 const DAMPING = 0.95;
 const DRIFT = 0.00004;

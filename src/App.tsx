@@ -60,7 +60,7 @@ function Main() {
   return (
     <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-16 gap-6 md:gap-16">
       {/* Left: Fasces constellation */}
-      <div className="w-[300px] h-[300px] sm:w-[360px] sm:h-[360px] md:w-[440px] md:h-[440px] shrink-0 relative">
+      <div className="w-[340px] h-[420px] sm:w-[400px] sm:h-[500px] md:w-[480px] md:h-[580px] shrink-0 relative">
         <OrbConstellation className="w-full h-full" />
       </div>
 
