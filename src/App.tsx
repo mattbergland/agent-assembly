@@ -60,7 +60,7 @@ function Main() {
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-6 -mt-6">
       {/* WebGL Constellation */}
-      <div className="w-[320px] h-[320px] sm:w-[400px] sm:h-[400px] md:w-[460px] md:h-[460px] relative">
+      <div className="w-[380px] h-[380px] sm:w-[480px] sm:h-[480px] md:w-[560px] md:h-[560px] relative">
         <OrbConstellation className="w-full h-full" />
       </div>
 

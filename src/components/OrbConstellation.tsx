@@ -90,43 +90,56 @@ function mkParticle(x: number, y: number, sizeMul = 1): Particle {
 function generateConstellation(count: number): Particle[] {
   const particles: Particle[] = [];
 
-  // Main stroke: flowing ring with calligraphic thickness variation
-  const strokeN = Math.floor(count * 0.88);
-  for (let i = 0; i < strokeN; i++) {
-    const t = (i / strokeN) * Math.PI * 2;
+  const rodCount = 9;
+  const rodSpacing = 0.022;
+  const halfBundle = ((rodCount - 1) * rodSpacing) / 2;
+  const rodTop = 0.44;
+  const rodBot = -0.46;
 
-    // Organic ring with gentle deformation
-    const baseR = 0.28;
-    const r =
-      baseR + Math.sin(t * 2 + 0.5) * 0.035 + Math.sin(t * 3 + 1.2) * 0.018;
-
-    // Calligraphic thickness: varies along the path
-    const thickBase = 0.012;
-    const thickVar = 0.024 * (0.5 + 0.5 * Math.sin(t - 0.8));
-    const thickness = thickBase + thickVar;
-
-    // Point on curve
-    const cx = Math.cos(t) * r;
-    const cy = Math.sin(t) * r;
-
-    // Perpendicular scatter for stroke width
-    const perpX = -Math.sin(t);
-    const perpY = Math.cos(t);
-    const spread = gaussRand() * thickness;
-
-    const x = cx + perpX * spread;
-    const y = cy + perpY * spread;
-
-    const sizeMul = 0.7 + Math.random() * 0.5;
-    particles.push(mkParticle(x, y, sizeMul));
+  // Rods: 55% of particles — vertical parallel lines
+  const rodN = Math.floor(count * 0.55);
+  const perRod = Math.floor(rodN / rodCount);
+  for (let r = 0; r < rodCount; r++) {
+    const rx = (r - (rodCount - 1) / 2) * rodSpacing;
+    for (let i = 0; i < perRod; i++) {
+      const t = i / (perRod - 1);
+      const y = rodBot + t * (rodTop - rodBot);
+      const x = rx + gaussRand() * 0.004;
+      particles.push(mkParticle(x, y, 0.55 + Math.random() * 0.4));
+    }
   }
 
-  // Sparse atmospheric particles for depth
-  const scatN = count - strokeN;
-  for (let i = 0; i < scatN; i++) {
-    const a = Math.random() * Math.PI * 2;
-    const dist = 0.18 + Math.random() * 0.22;
-    particles.push(mkParticle(Math.cos(a) * dist, Math.sin(a) * dist, 0.3));
+  // Bindings: 18% — horizontal bands wrapping the bundle
+  const bindN = Math.floor(count * 0.18);
+  const bandYs = [-0.28, 0.0, 0.28];
+  const perBand = Math.floor(bindN / bandYs.length);
+  for (const by of bandYs) {
+    for (let i = 0; i < perBand; i++) {
+      const x = (Math.random() - 0.5) * (halfBundle * 2 + 0.035);
+      const y = by + gaussRand() * 0.01;
+      particles.push(mkParticle(x, y, 0.5 + Math.random() * 0.35));
+    }
+  }
+
+  // Axe blade: 17% — crescent protruding from upper-left
+  const axeN = Math.floor(count * 0.17);
+  for (let i = 0; i < axeN; i++) {
+    const t = Math.random();
+    const bladeTop = 0.38;
+    const bladeBot = -0.02;
+    const y = bladeBot + t * (bladeTop - bladeBot);
+    const maxW = 0.1;
+    const w = maxW * Math.sin(t * Math.PI) * (0.7 + 0.3 * Math.random());
+    const x = -halfBundle - 0.012 - w;
+    particles.push(mkParticle(x, y, 0.45 + Math.random() * 0.4));
+  }
+
+  // Sparse atmospheric particles
+  const restN = count - particles.length;
+  for (let i = 0; i < restN; i++) {
+    const x = (Math.random() - 0.5) * 0.35;
+    const y = (Math.random() - 0.5) * 1.1;
+    particles.push(mkParticle(x, y, 0.2));
   }
 
   return particles;
@@ -147,12 +160,12 @@ function compileShader(
 
 /* ── Component ─────────────────────────────────────────────── */
 
-const PARTICLE_COUNT = 800;
-const DISPERSE_RADIUS = 0.4;
-const DISPERSE_FORCE = 0.12;
-const SPRING = 0.016;
-const DAMPING = 0.92;
-const DRIFT = 0.00006;
+const PARTICLE_COUNT = 900;
+const DISPERSE_RADIUS = 0.32;
+const DISPERSE_FORCE = 0.045;
+const SPRING = 0.012;
+const DAMPING = 0.95;
+const DRIFT = 0.00004;
 
 export default function OrbConstellation({
   className = "",
@@ -252,7 +265,7 @@ export default function OrbConstellation({
       canvas.width = Math.floor(r.width * dpr);
       canvas.height = Math.floor(r.height * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.uniform1f(uScale, dpr * Math.min(r.width, r.height) / 90);
+      gl.uniform1f(uScale, dpr * Math.min(r.width, r.height) / 115);
     };
 
     // Reduced motion check
