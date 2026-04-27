@@ -260,10 +260,6 @@ export default function OrbConstellation({
       gl.uniform1f(uScale, dpr * Math.min(r.width, r.height) / 90);
     };
 
-    const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-    resize();
-
     // Reduced motion check
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -343,6 +339,13 @@ export default function OrbConstellation({
         raf = requestAnimationFrame(tick);
       }
     };
+
+    const ro = new ResizeObserver(() => {
+      resize();
+      if (prefersReduced) tick();
+    });
+    ro.observe(canvas);
+    resize();
 
     tick();
 
