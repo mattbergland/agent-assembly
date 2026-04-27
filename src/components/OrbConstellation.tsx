@@ -31,7 +31,7 @@ void main() {
   vec2 uv = gl_PointCoord - vec2(0.5);
   float d = length(uv);
   if (d > 0.5) discard;
-  float alpha = smoothstep(0.5, 0.05, d) * v_opacity;
+  float alpha = smoothstep(0.5, 0.18, d) * v_opacity;
   gl_FragColor = vec4(v_color, alpha);
 }
 `;
@@ -76,10 +76,10 @@ function mkParticle(x: number, y: number, sizeMul = 1): Particle {
     y,
     vx: 0,
     vy: 0,
-    size: (Math.random() * 3.2 + 1.0) * sizeMul,
+    size: (Math.random() * 4.0 + 1.8) * sizeMul,
     opacity: isAccent
-      ? Math.random() * 0.55 + 0.35
-      : Math.random() * 0.55 + 0.15,
+      ? Math.random() * 0.25 + 0.75
+      : Math.random() * 0.35 + 0.6,
     phase: Math.random() * Math.PI * 2,
     colorR: r,
     colorG: g,
@@ -90,48 +90,43 @@ function mkParticle(x: number, y: number, sizeMul = 1): Particle {
 function generateConstellation(count: number): Particle[] {
   const particles: Particle[] = [];
 
-  // Core dense cluster – 45%
-  const coreN = Math.floor(count * 0.45);
-  for (let i = 0; i < coreN; i++) {
-    const a = Math.random() * Math.PI * 2;
-    const r = Math.abs(gaussRand()) * 0.14;
-    particles.push(mkParticle(Math.cos(a) * r, Math.sin(a) * r, 0.9));
+  // Main stroke: flowing ring with calligraphic thickness variation
+  const strokeN = Math.floor(count * 0.88);
+  for (let i = 0; i < strokeN; i++) {
+    const t = (i / strokeN) * Math.PI * 2;
+
+    // Organic ring with gentle deformation
+    const baseR = 0.28;
+    const r =
+      baseR + Math.sin(t * 2 + 0.5) * 0.035 + Math.sin(t * 3 + 1.2) * 0.018;
+
+    // Calligraphic thickness: varies along the path
+    const thickBase = 0.012;
+    const thickVar = 0.024 * (0.5 + 0.5 * Math.sin(t - 0.8));
+    const thickness = thickBase + thickVar;
+
+    // Point on curve
+    const cx = Math.cos(t) * r;
+    const cy = Math.sin(t) * r;
+
+    // Perpendicular scatter for stroke width
+    const perpX = -Math.sin(t);
+    const perpY = Math.cos(t);
+    const spread = gaussRand() * thickness;
+
+    const x = cx + perpX * spread;
+    const y = cy + perpY * spread;
+
+    const sizeMul = 0.7 + Math.random() * 0.5;
+    particles.push(mkParticle(x, y, sizeMul));
   }
 
-  // Satellite clusters – 25%
-  const sats = 4;
-  const satN = Math.floor(count * 0.25 / sats);
-  for (let s = 0; s < sats; s++) {
-    const sa = (s / sats) * Math.PI * 2 + (Math.random() - 0.5) * 0.9;
-    const sd = 0.22 + Math.random() * 0.2;
-    const cx = Math.cos(sa) * sd;
-    const cy = Math.sin(sa) * sd;
-    for (let i = 0; i < satN; i++) {
-      const a = Math.random() * Math.PI * 2;
-      const r = Math.abs(gaussRand()) * 0.07;
-      particles.push(
-        mkParticle(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 0.75)
-      );
-    }
-  }
-
-  // Filaments – 15%
-  const filN = Math.floor(count * 0.15);
-  for (let i = 0; i < filN; i++) {
-    const a = Math.random() * Math.PI * 2;
-    const r = Math.random() * 0.38;
-    const n = gaussRand() * 0.025;
-    particles.push(
-      mkParticle(Math.cos(a) * r + n, Math.sin(a) * r + n, 0.6)
-    );
-  }
-
-  // Scattered outliers – 15%
-  const scatN = Math.floor(count * 0.15);
+  // Sparse atmospheric particles for depth
+  const scatN = count - strokeN;
   for (let i = 0; i < scatN; i++) {
     const a = Math.random() * Math.PI * 2;
-    const r = 0.25 + Math.random() * 0.35;
-    particles.push(mkParticle(Math.cos(a) * r, Math.sin(a) * r, 0.5));
+    const dist = 0.18 + Math.random() * 0.22;
+    particles.push(mkParticle(Math.cos(a) * dist, Math.sin(a) * dist, 0.3));
   }
 
   return particles;
