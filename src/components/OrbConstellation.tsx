@@ -90,55 +90,117 @@ function mkParticle(x: number, y: number, sizeMul = 1): Particle {
 function generateConstellation(count: number): Particle[] {
   const particles: Particle[] = [];
 
-  const rodCount = 9;
-  const rodSpacing = 0.022;
-  const halfBundle = ((rodCount - 1) * rodSpacing) / 2;
-  const rodTop = 0.44;
-  const rodBot = -0.46;
+  // Bundle dimensions (matched to 3D reference model)
+  const bundleRadius = 0.065;
+  const rodTop = 0.42;
+  const rodBot = -0.44;
 
-  // Rods: 55% of particles — vertical parallel lines
-  const rodN = Math.floor(count * 0.55);
-  const perRod = Math.floor(rodN / rodCount);
-  for (let r = 0; r < rodCount; r++) {
-    const rx = (r - (rodCount - 1) / 2) * rodSpacing;
+  // Rod centers: hexagonal packing (~13 rods)
+  const rodCenters: [number, number][] = [];
+  const rodR = 0.018;
+  // Center rod
+  rodCenters.push([0, 0]);
+  // Inner ring (6 rods)
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
+    rodCenters.push([Math.cos(a) * rodR * 2, Math.sin(a) * rodR * 2]);
+  }
+  // Partial outer ring (6 more rods filling gaps)
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    rodCenters.push([Math.cos(a) * rodR * 3.6, Math.sin(a) * rodR * 3.6]);
+  }
+
+  // Rods: 45% of particles
+  const rodN = Math.floor(count * 0.45);
+  const perRod = Math.floor(rodN / rodCenters.length);
+  for (const [cx, cy] of rodCenters) {
     for (let i = 0; i < perRod; i++) {
       const t = i / (perRod - 1);
       const y = rodBot + t * (rodTop - rodBot);
-      const x = rx + gaussRand() * 0.004;
-      particles.push(mkParticle(x, y, 0.55 + Math.random() * 0.4));
+      const x = cx + gaussRand() * 0.003;
+      const yJitter = cy * 0.15;
+      particles.push(mkParticle(x, y + yJitter, 0.55 + Math.random() * 0.4));
     }
   }
 
-  // Bindings: 18% — horizontal bands wrapping the bundle
-  const bindN = Math.floor(count * 0.18);
-  const bandYs = [-0.28, 0.0, 0.28];
-  const perBand = Math.floor(bindN / bandYs.length);
-  for (const by of bandYs) {
-    for (let i = 0; i < perBand; i++) {
-      const x = (Math.random() - 0.5) * (halfBundle * 2 + 0.035);
-      const y = by + gaussRand() * 0.01;
-      particles.push(mkParticle(x, y, 0.5 + Math.random() * 0.35));
-    }
-  }
-
-  // Axe blade: 17% — crescent protruding from upper-left
-  const axeN = Math.floor(count * 0.17);
-  for (let i = 0; i < axeN; i++) {
+  // Central pole: 5% — extends above and below bundle
+  const poleN = Math.floor(count * 0.05);
+  const poleTop = 0.52;
+  const poleBot = -0.54;
+  for (let i = 0; i < poleN; i++) {
     const t = Math.random();
-    const bladeTop = 0.38;
-    const bladeBot = -0.02;
-    const y = bladeBot + t * (bladeTop - bladeBot);
-    const maxW = 0.1;
-    const w = maxW * Math.sin(t * Math.PI) * (0.7 + 0.3 * Math.random());
-    const x = -halfBundle - 0.012 - w;
+    const y = poleBot + t * (poleTop - poleBot);
+    const x = gaussRand() * 0.003;
+    particles.push(mkParticle(x, y, 0.3 + Math.random() * 0.3));
+  }
+
+  // X-pattern leather bindings: 18% — criss-cross wraps
+  const bindN = Math.floor(count * 0.18);
+  const bandCenters = [-0.30, -0.10, 0.10, 0.30];
+  const bandHeight = 0.10;
+  const perBand = Math.floor(bindN / bandCenters.length);
+  for (const by of bandCenters) {
+    for (let i = 0; i < perBand; i++) {
+      const t = Math.random() * 2 - 1;
+      const xSpread = bundleRadius + 0.015;
+      const halfH = bandHeight / 2;
+      // X-pattern: two diagonal lines crossing
+      if (Math.random() < 0.5) {
+        const x = t * xSpread;
+        const y = by + t * halfH + gaussRand() * 0.006;
+        particles.push(mkParticle(x, y, 0.5 + Math.random() * 0.35));
+      } else {
+        const x = t * xSpread;
+        const y = by - t * halfH + gaussRand() * 0.006;
+        particles.push(mkParticle(x, y, 0.5 + Math.random() * 0.35));
+      }
+    }
+  }
+
+  // Top and bottom cap bands: 4%
+  const capN = Math.floor(count * 0.04);
+  const capYs = [rodTop - 0.01, rodBot + 0.01];
+  const perCap = Math.floor(capN / capYs.length);
+  for (const cy of capYs) {
+    for (let i = 0; i < perCap; i++) {
+      const x = (Math.random() - 0.5) * (bundleRadius * 2 + 0.02);
+      const y = cy + gaussRand() * 0.008;
+      particles.push(mkParticle(x, y, 0.55 + Math.random() * 0.3));
+    }
+  }
+
+  // Axe blade: 18% — wide crescent on right side, upper third
+  const axeN = Math.floor(count * 0.18);
+  const bladeTop = 0.38;
+  const bladeBot = 0.06;
+  const bladeCenter = (bladeTop + bladeBot) / 2;
+  const bladeHalf = (bladeTop - bladeBot) / 2;
+  for (let i = 0; i < axeN; i++) {
+    const t = Math.random() * 2 - 1;
+    const y = bladeCenter + t * bladeHalf;
+    const normT = Math.abs(t);
+    const maxW = 0.14;
+    const edgeCurve = Math.sqrt(1 - normT * normT);
+    const w =
+      maxW * edgeCurve * (0.65 + 0.35 * Math.random());
+    const x = bundleRadius + 0.008 + w;
     particles.push(mkParticle(x, y, 0.45 + Math.random() * 0.4));
+  }
+
+  // Axe handle/neck connecting blade to bundle
+  const neckN = Math.floor(count * 0.02);
+  for (let i = 0; i < neckN; i++) {
+    const y = bladeCenter + gaussRand() * 0.02;
+    const x = bundleRadius + Math.random() * 0.008;
+    particles.push(mkParticle(x, y, 0.4 + Math.random() * 0.3));
   }
 
   // Sparse atmospheric particles
   const restN = count - particles.length;
   for (let i = 0; i < restN; i++) {
-    const x = (Math.random() - 0.5) * 0.35;
-    const y = (Math.random() - 0.5) * 1.1;
+    const x = (Math.random() - 0.5) * 0.4;
+    const y = (Math.random() - 0.5) * 1.2;
     particles.push(mkParticle(x, y, 0.2));
   }
 
