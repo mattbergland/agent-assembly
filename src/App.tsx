@@ -58,44 +58,45 @@ function LogoMark() {
 
 function Main() {
   return (
-    <main className="flex-1 flex flex-col items-center justify-center px-6 -mt-6">
-      {/* WebGL Constellation */}
-      <div className="w-[380px] h-[380px] sm:w-[480px] sm:h-[480px] md:w-[560px] md:h-[560px] relative">
+    <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-16 gap-6 md:gap-16">
+      {/* Left: Fasces constellation */}
+      <div className="w-[300px] h-[300px] sm:w-[360px] sm:h-[360px] md:w-[440px] md:h-[440px] shrink-0 relative">
         <OrbConstellation className="w-full h-full" />
       </div>
 
-      {/* Copy */}
-      <p className="text-center text-base sm:text-lg md:text-xl mt-4 max-w-md leading-snug font-medium tracking-tight">
-        AI for people who bring people together.
-      </p>
-      <p className="text-center text-sm text-ink-muted mt-2 max-w-sm leading-relaxed">
-        The toolkit and playbooks for event marketers — with AI doing the
-        chores.
-      </p>
+      {/* Right: Copy block */}
+      <div className="flex flex-col items-center md:items-start max-w-sm">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight leading-tight text-center md:text-left">
+          AI for people who bring people together.
+        </h1>
+        <p className="text-sm md:text-base text-ink-muted mt-3 leading-relaxed text-center md:text-left">
+          The toolkit and playbooks for event marketers — with AI doing the
+          chores.
+        </p>
 
-      {/* Links */}
-      <nav className="flex items-center gap-2 mt-5 text-sm">
-        <a
-          href="#toolkit"
-          className="text-ink-muted hover:text-ink transition-colors"
-        >
-          Toolkit
-        </a>
-        <span className="text-ink-muted/40">/</span>
-        <a
-          href="#field"
-          className="text-ink-muted hover:text-ink transition-colors"
-        >
-          Field Notes
-        </a>
-        <span className="text-ink-muted/40">/</span>
-        <a
-          href="#join"
-          className="text-ink-muted hover:text-ink transition-colors"
-        >
-          Join
-        </a>
-      </nav>
+        <nav className="flex items-center gap-3 mt-6 text-sm">
+          <a
+            href="#toolkit"
+            className="text-ink-muted hover:text-ink transition-colors"
+          >
+            Toolkit
+          </a>
+          <span className="text-ink-muted/40">/</span>
+          <a
+            href="#field"
+            className="text-ink-muted hover:text-ink transition-colors"
+          >
+            Field Notes
+          </a>
+          <span className="text-ink-muted/40">/</span>
+          <a
+            href="#join"
+            className="text-ink-muted hover:text-ink transition-colors"
+          >
+            Join
+          </a>
+        </nav>
+      </div>
     </main>
   );
 }
