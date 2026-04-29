@@ -10,7 +10,7 @@ interface VoiceInputProps {
 }
 
 interface SpeechRecognitionEvent {
-  results: { [index: number]: { [index: number]: { transcript: string } } };
+  results: { length: number; [index: number]: { [index: number]: { transcript: string } } };
   resultIndex: number;
 }
 
@@ -67,7 +67,7 @@ export default function VoiceInput({
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       let transcript = "";
-      for (let i = event.resultIndex; i < Object.keys(event.results).length; i++) {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
         transcript += event.results[i][0].transcript;
       }
       onChange(valueRef.current ? `${valueRef.current} ${transcript}` : transcript);

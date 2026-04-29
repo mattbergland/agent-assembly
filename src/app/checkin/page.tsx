@@ -69,6 +69,7 @@ export default function CheckinPage() {
       tags,
       timestamp: Date.now(),
     });
+    setCountdown(config.autoResetSeconds);
     setStep("done");
   };
 
