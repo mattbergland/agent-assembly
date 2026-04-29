@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Nav, Footer } from "@/components/Layout";
+import { Footer } from "@/components/Layout";
 import { useAppState } from "@/seating-planner/store";
 import { Header } from "@/seating-planner/components/Header";
 import { GuestPanel } from "@/seating-planner/components/GuestPanel";
@@ -30,8 +30,6 @@ export default function SeatArrangement() {
 
   return (
     <div className="min-h-screen bg-paper text-ink font-sans antialiased flex flex-col">
-      <Nav />
-
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Breadcrumb */}
         <div className="px-6 md:px-10 pt-6 pb-2">
