@@ -34,7 +34,7 @@ const toolkitItems: ToolkitItem[] = [
     description:
       "Design table assignments and seating charts that maximize networking potential and strategic conversations.",
     icon: <SeatArrangementIcon />,
-    comingSoon: true,
+    to: "/toolkit/seat-arrangement",
   },
   {
     id: "featured-venues",
