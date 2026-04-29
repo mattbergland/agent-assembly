@@ -1,0 +1,75 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@theme {
+  --color-paper: #F5F5F3;
+  --color-ink: #111111;
+  --color-ink-soft: #2A2A2A;
+  --color-ink-muted: #5A5A58;
+  --color-rule: #1F1F1F;
+  --color-lavender: #8E7DBE;
+  --color-lavender-soft: #B8ABD9;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+    font-weight: 400;
+  }
+
+  ::selection {
+    @apply bg-lavender text-paper;
+  }
+}
+
+@layer components {
+  .input-field {
+    @apply w-full bg-transparent border-b border-rule/20 py-2 px-0 text-ink
+           placeholder:text-ink-muted/50 focus:outline-none focus:border-lavender
+           transition-colors duration-200 text-sm;
+  }
+
+  .input-label {
+    @apply block text-[11px] uppercase tracking-[0.12em] text-ink-muted mb-1 font-medium;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-ink text-paper px-5 py-2.5
+           text-sm font-medium tracking-tight rounded-none
+           hover:bg-ink-soft transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 border border-rule/30 text-ink px-4 py-2
+           text-sm font-medium tracking-tight rounded-none
+           hover:bg-ink/5 transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-paper border border-rule/10 p-6;
+  }
+
+  .stat-value {
+    @apply text-2xl font-semibold tracking-tight text-ink leading-tight;
+  }
+
+  .stat-label {
+    @apply text-[11px] uppercase tracking-[0.12em] text-ink-muted font-medium;
+  }
+
+  .metric-positive {
+    @apply text-emerald-700;
+  }
+
+  .metric-negative {
+    @apply text-red-700;
+  }
+}
