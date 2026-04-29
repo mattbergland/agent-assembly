@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 interface VoiceInputProps {
   value: string;
@@ -46,6 +46,8 @@ export default function VoiceInput({
   const [listening, setListening] = useState(false);
   const supported = isSpeechSupported();
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const valueRef = useRef(value);
+  useEffect(() => { valueRef.current = value; }, [value]);
 
   const toggleListening = useCallback(() => {
     if (listening) {
@@ -68,7 +70,7 @@ export default function VoiceInput({
       for (let i = event.resultIndex; i < Object.keys(event.results).length; i++) {
         transcript += event.results[i][0].transcript;
       }
-      onChange(value ? `${value} ${transcript}` : transcript);
+      onChange(valueRef.current ? `${valueRef.current} ${transcript}` : transcript);
     };
 
     recognition.onerror = () => setListening(false);
@@ -76,7 +78,7 @@ export default function VoiceInput({
 
     recognition.start();
     setListening(true);
-  }, [listening, value, onChange]);
+  }, [listening, onChange]);
 
   return (
     <div className="flex flex-col gap-1.5">
