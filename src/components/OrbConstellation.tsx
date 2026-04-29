@@ -9,6 +9,8 @@ attribute float a_opacity;
 attribute vec3 a_color;
 
 uniform float u_scale;
+uniform float u_aspect;
+uniform float u_offsetX;
 
 varying float v_opacity;
 varying vec3 v_color;
@@ -16,7 +18,7 @@ varying vec3 v_color;
 void main() {
   v_opacity = a_opacity;
   v_color = a_color;
-  gl_Position = vec4(a_position, 0.0, 1.0);
+  gl_Position = vec4(a_position.x / u_aspect + u_offsetX, a_position.y, 0.0, 1.0);
   gl_PointSize = a_size * u_scale;
 }
 `;
@@ -106,8 +108,8 @@ function mkParticle(
 function generateConstellation(count: number): Particle[] {
   const particles: Particle[] = [];
 
-  // Scale factor — makes everything ~2.2× bigger
-  const S = 2.2;
+  // Scale factor — fills most of the viewport height
+  const S = 1.6;
 
   // Bundle dimensions (matched to 3D reference model)
   const bundleRadius = 0.065 * S;
@@ -276,6 +278,8 @@ export default function OrbConstellation({
     const aOpacity = gl.getAttribLocation(prog, "a_opacity");
     const aColor = gl.getAttribLocation(prog, "a_color");
     const uScale = gl.getUniformLocation(prog, "u_scale");
+    const uAspect = gl.getUniformLocation(prog, "u_aspect");
+    const uOffsetX = gl.getUniformLocation(prog, "u_offsetX");
 
     // Blending
     gl.enable(gl.BLEND);
@@ -318,13 +322,18 @@ export default function OrbConstellation({
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
     gl.bufferData(gl.ARRAY_BUFFER, posArr, gl.DYNAMIC_DRAW);
 
-    // Mouse
+    // Mouse — track in particle coordinate space
     const mouse = { x: -9999, y: -9999, active: false };
+    let aspect = 1;
+    const offsetX = -0.35; // shift shape left to make room for copy
 
     const onMove = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect();
-      mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
-      mouse.y = -(((e.clientY - r.top) / r.height) * 2 - 1);
+      const clipX = ((e.clientX - r.left) / r.width) * 2 - 1;
+      const clipY = -(((e.clientY - r.top) / r.height) * 2 - 1);
+      // Convert from clip space to particle space (undo aspect + offset)
+      mouse.x = (clipX - offsetX) * aspect;
+      mouse.y = clipY;
       mouse.active = true;
     };
     const onLeave = () => {
@@ -341,7 +350,10 @@ export default function OrbConstellation({
       canvas.width = Math.floor(r.width * dpr);
       canvas.height = Math.floor(r.height * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.uniform1f(uScale, dpr * Math.min(r.width, r.height) / 115);
+      aspect = r.width / r.height;
+      gl.uniform1f(uScale, dpr * r.height / 115);
+      gl.uniform1f(uAspect, aspect);
+      gl.uniform1f(uOffsetX, offsetX);
     };
 
     // Reduced motion check

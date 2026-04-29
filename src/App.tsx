@@ -3,10 +3,16 @@ import "./App.css";
 
 export default function App() {
   return (
-    <div className="h-screen bg-paper text-ink font-sans antialiased flex flex-col overflow-hidden">
-      <Nav />
-      <Main />
-      <Footer />
+    <div className="h-screen bg-paper text-ink font-sans antialiased overflow-hidden relative">
+      {/* Full-viewport constellation background */}
+      <OrbConstellation className="absolute inset-0 w-full h-full" />
+
+      {/* UI layers on top */}
+      <div className="relative z-10 flex flex-col h-full pointer-events-none">
+        <Nav />
+        <Main />
+        <Footer />
+      </div>
     </div>
   );
 }
@@ -15,7 +21,7 @@ export default function App() {
 
 function Nav() {
   return (
-    <header className="flex items-center justify-between px-6 md:px-10 py-5 flex-none">
+    <header className="flex items-center justify-between px-6 md:px-10 py-5 flex-none pointer-events-auto">
       <a href="/" className="flex items-center gap-2.5">
         <LogoMark />
         <span className="text-sm tracking-tight font-medium">
@@ -58,14 +64,9 @@ function LogoMark() {
 
 function Main() {
   return (
-    <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-6 md:px-16 gap-6 md:gap-16">
-      {/* Left: Fasces constellation */}
-      <div className="w-[340px] h-[420px] sm:w-[400px] sm:h-[500px] md:w-[480px] md:h-[580px] shrink-0 relative">
-        <OrbConstellation className="w-full h-full" />
-      </div>
-
-      {/* Right: Copy block */}
-      <div className="flex flex-col items-center md:items-start max-w-sm">
+    <main className="flex-1 flex items-center justify-end px-6 md:px-16">
+      {/* Copy block — positioned right, constellation fills viewport behind */}
+      <div className="flex flex-col items-center md:items-start max-w-sm pointer-events-auto">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight leading-tight text-center md:text-left">
           AI for people who bring people together.
         </h1>
@@ -104,7 +105,7 @@ function Main() {
 
 function Footer() {
   return (
-    <footer className="flex items-center justify-between px-6 md:px-10 py-5 flex-none text-xs text-ink-muted">
+    <footer className="flex items-center justify-between px-6 md:px-10 py-5 flex-none text-xs text-ink-muted pointer-events-auto">
       <span>© 2026 Agent Assembly</span>
       <div className="flex items-center gap-4">
         <a
