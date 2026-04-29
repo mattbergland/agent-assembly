@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import Home from "./pages/Home";
 import Toolkit from "./pages/Toolkit";
+import TemplateLibrary from "./pages/TemplateLibrary";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -11,6 +12,7 @@ createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/toolkit" element={<Toolkit />} />
+        <Route path="/toolkit/templates" element={<TemplateLibrary />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

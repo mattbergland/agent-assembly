@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 
 export function Nav() {
   const location = useLocation();
-  const isHome = location.pathname === "/";
+  const isToolkit = location.pathname.startsWith("/toolkit");
 
   return (
     <header className="flex items-center justify-between px-6 md:px-10 py-5 flex-none pointer-events-auto">
@@ -16,7 +16,7 @@ export function Nav() {
         <Link
           to="/toolkit"
           className={`text-sm transition-colors ${
-            !isHome
+            isToolkit
               ? "text-ink font-medium"
               : "text-ink-muted hover:text-ink"
           }`}
