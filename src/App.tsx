@@ -64,8 +64,9 @@ function LogoMark() {
 
 function Main() {
   return (
-    <main className="flex-1 flex items-center justify-end px-6 md:px-16">
-      {/* Copy block — positioned right, constellation fills viewport behind */}
+    <main className="flex-1 flex items-center justify-center px-6 md:px-16">
+      {/* Max-width wrapper keeps content from flying to the edge on ultrawide */}
+      <div className="w-full max-w-6xl flex justify-end">
       <div className="flex flex-col items-center md:items-start max-w-sm pointer-events-auto">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight leading-tight text-center md:text-left">
           AI for people who bring people together.
@@ -96,6 +97,7 @@ function Main() {
             </a>
           ))}
         </nav>
+      </div>
       </div>
     </main>
   );
