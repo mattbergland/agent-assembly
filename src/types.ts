@@ -97,7 +97,7 @@ export function calculateROI(inputs: EventInputs): ROIMetrics {
     inputs.foodBev +
     inputs.otherCosts
 
-  const safe = (n: number, d: number) => (d > 0 ? n / d : 0)
+  const safe = (n: number, d: number) => (d > 0 ? n / d : NaN)
 
   return {
     totalCost,
@@ -107,8 +107,8 @@ export function calculateROI(inputs: EventInputs): ROIMetrics {
     costPerOpportunity: safe(totalCost, inputs.opportunities),
     costPerMeeting: safe(totalCost, inputs.meetingsTaken),
     pipelineToSpendRatio: safe(inputs.pipelineGenerated, totalCost),
-    revenueROI: totalCost > 0 ? ((inputs.revenueWon - totalCost) / totalCost) * 100 : 0,
-    pipelineROI: totalCost > 0 ? ((inputs.pipelineGenerated - totalCost) / totalCost) * 100 : 0,
+    revenueROI: totalCost > 0 ? ((inputs.revenueWon - totalCost) / totalCost) * 100 : NaN,
+    pipelineROI: totalCost > 0 ? ((inputs.pipelineGenerated - totalCost) / totalCost) * 100 : NaN,
     revenuePerAttendee: safe(inputs.revenueWon, inputs.totalAttendees),
     conversionLeadToMQL: safe(inputs.mqls, inputs.leadsCollected) * 100,
     conversionMQLToSQL: safe(inputs.sqls, inputs.mqls) * 100,

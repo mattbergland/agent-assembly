@@ -17,12 +17,12 @@ function fmtDollar(n: number) {
 }
 
 function fmtPercent(n: number) {
-  if (n === 0 || !isFinite(n)) return '—'
+  if (!isFinite(n)) return '—'
   return `${n.toFixed(1)}%`
 }
 
 function fmtRatio(n: number) {
-  if (n === 0 || !isFinite(n)) return '—'
+  if (!isFinite(n)) return '—'
   return `${n.toFixed(1)}x`
 }
 

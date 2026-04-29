@@ -174,12 +174,12 @@ export default function Calculator({ activeEventId, onSaved }: CalculatorProps) 
   }
 
   const fmtPercent = (n: number) => {
-    if (n === 0 || !isFinite(n)) return '—'
+    if (!isFinite(n)) return '—'
     return `${n.toFixed(1)}%`
   }
 
   const fmtRatio = (n: number) => {
-    if (n === 0 || !isFinite(n)) return '—'
+    if (!isFinite(n)) return '—'
     return `${n.toFixed(1)}x`
   }
 

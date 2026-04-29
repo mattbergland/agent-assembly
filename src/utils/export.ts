@@ -14,11 +14,12 @@ function fmtDollar(n: number): string {
 }
 
 function fmtPercent(n: number): string {
-  return fmt(n, '', '%', 1)
+  if (!isFinite(n)) return '—'
+  return `${n.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
 }
 
 function fmtRatio(n: number): string {
-  if (n === 0 || !isFinite(n)) return '—'
+  if (!isFinite(n)) return '—'
   return `${n.toFixed(1)}x`
 }
 

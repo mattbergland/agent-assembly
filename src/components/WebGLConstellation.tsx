@@ -185,12 +185,15 @@ export default function WebGLConstellation() {
       const aspectRatio = canvas.width / canvas.height
       const scale = REF_HEIGHT / window.innerHeight
 
+      const mouseParticleX = mouseRef.current.x * aspectRatio / scale
+      const mouseParticleY = mouseRef.current.y / scale
+
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i]
 
         if (mouseRef.current.active && !reducedMotion.current) {
-          const dx = p.x - mouseRef.current.x
-          const dy = p.y - mouseRef.current.y
+          const dx = p.x - mouseParticleX
+          const dy = p.y - mouseParticleY
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < DISPERSE_RADIUS && dist > 0.001) {
             const force = (DISPERSE_RADIUS - dist) * DISPERSE_FORCE
