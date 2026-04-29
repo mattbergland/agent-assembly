@@ -31,7 +31,7 @@ export function useAppState() {
   const update = useCallback((fn: (prev: AppState) => AppState) => {
     setState(prev => {
       const next = fn(prev)
-      saveState(next)
+      try { saveState(next) } catch { /* ignore storage errors */ }
       return next
     })
   }, [])
