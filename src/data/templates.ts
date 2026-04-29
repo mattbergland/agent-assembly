@@ -147,6 +147,25 @@ export const templates: Template[] = [
     },
   },
   {
+    id: "roundtable-cheat-sheet",
+    title: "Roundtable Cheat Sheet",
+    caption:
+      "Quick-reference profiles for every attendee — role, company, talking points, and connection notes so you walk in prepared.",
+    tags: ["Executive", "Pre-Event", "Networking"],
+    preview: {
+      heading: "Roundtable Cheat Sheet",
+      sections: [
+        "Attendee Overview",
+        "Company & Role",
+        "Key Talking Points",
+        "Recent News & Context",
+        "Connection Notes",
+        "Follow-Up Actions",
+      ],
+      style: "brief",
+    },
+  },
+  {
     id: "venue-walkthrough",
     title: "Venue Walkthrough Checklist",
     caption:
