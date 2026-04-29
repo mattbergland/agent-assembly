@@ -145,7 +145,7 @@ export default function AdminPage() {
                 max={120}
                 value={config.autoResetSeconds}
                 onChange={(e) =>
-                  updateConfig({ autoResetSeconds: Number(e.target.value) })
+                  updateConfig({ autoResetSeconds: Math.max(5, Math.min(120, Number(e.target.value) || 15)) })
                 }
                 className="w-28 px-4 py-3.5 bg-white border border-rule/10 rounded-xl text-ink text-base focus:outline-none focus:ring-2 focus:ring-lavender/40 transition-all"
               />
