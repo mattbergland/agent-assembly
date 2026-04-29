@@ -42,7 +42,7 @@ export default function ROICalculator() {
     <div className="relative min-h-screen bg-paper text-ink font-sans antialiased flex flex-col">
       <WebGLConstellation />
 
-      <div className="relative z-10 flex flex-col min-h-screen">
+      <div className="relative z-10 flex flex-col min-h-screen pointer-events-none">
         <Nav
           extraLinks={
             <button
@@ -54,7 +54,7 @@ export default function ROICalculator() {
           }
         />
 
-        <main className="flex-1 px-4 md:px-10 pb-16">
+        <main className="flex-1 px-4 md:px-10 pb-16 pointer-events-auto">
           <div className="max-w-7xl mx-auto">
             {/* Breadcrumb */}
             <div className="pt-6 pb-2">
