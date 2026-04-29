@@ -35,6 +35,7 @@ export function GuestPanel({ guests, unseatedGuests, onAdd, onAddMany, onUpdate,
 
         {editingGuest ? (
           <AddGuestForm
+            key={editingGuest.id}
             onAdd={onAdd}
             editGuest={editingGuest}
             onUpdate={onUpdate}

@@ -116,6 +116,7 @@ export function useAppState() {
         return {
           ...t,
           seats: t.seats.map(seat => {
+            if (seat.index === seatIndex && seat.guestId === guestId) return seat
             if (seat.guestId === guestId) return { ...seat, guestId: null }
             if (seat.index === seatIndex) return { ...seat, guestId }
             return seat
