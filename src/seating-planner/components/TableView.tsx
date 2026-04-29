@@ -157,7 +157,7 @@ function computeSeatPositions(shape: TableShape, count: number): { seats: SeatPo
   }
 
   if (shape === 'hollow-square') {
-    const perSide = Math.max(1, Math.floor(count / 4))
+    const perSide = Math.floor(count / 4)
     const remainder = count - perSide * 4
     const top = perSide + (remainder > 0 ? 1 : 0)
     const right = perSide + (remainder > 1 ? 1 : 0)
