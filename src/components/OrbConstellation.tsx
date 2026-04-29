@@ -450,6 +450,13 @@ export default function OrbConstellation({
       ro.disconnect();
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerleave", onLeave);
+      gl.deleteBuffer(posBuf);
+      gl.deleteBuffer(sizeBuf);
+      gl.deleteBuffer(opBuf);
+      gl.deleteBuffer(colBuf);
+      gl.deleteProgram(prog);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
     };
   }, []);
 
