@@ -3,7 +3,7 @@ import { Info } from 'lucide-react'
 
 export default function Tooltip({ text }: { text: string }) {
   const [visible, setVisible] = useState(false)
-  const timeout = useRef<ReturnType<typeof setTimeout>>(null)
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const show = () => {
     if (timeout.current) clearTimeout(timeout.current)

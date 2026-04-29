@@ -1,34 +1,50 @@
-# Event ROI Calculator
+# React + TypeScript + Vite
 
-A real-time ROI calculator built for B2B field marketing and events teams. Enter your costs and engagement data as it comes in — results update live.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
+Currently, two official plugins are available:
 
-- **Live calculations** — results appear instantly as you type, no submit button needed
-- **Field marketing native** — cost categories, funnel stages, and metrics designed for events teams
-- **Info tooltips** — hover any input label for an explanation of what to enter
-- **Save & resume** — save events to your browser and come back to fill in more data later
-- **Compare events** — side-by-side comparison table highlighting the best-performing event per metric
-- **Export** — download reports as Excel (.xlsx), Word (.docx), or copy Markdown for Notion
-- **WebGL constellation** — interactive particle background with hover scatter effect
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Tech Stack
+## Expanding the ESLint configuration
 
-- React + TypeScript + Vite
-- Tailwind CSS with custom design tokens
-- WebGL (raw, no Three.js)
-- localStorage for persistence
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-## Getting Started
+- Configure the top-level `parserOptions` property like this:
 
-```bash
-npm install
-npm run dev
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-## Visual Identity
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-- **Background:** #F5F5F3 (warm off-white "paper")
-- **Typography:** Inter, weights 300–800, OpenType features ss01/cv11
-- **Accent:** #8E7DBE (lavender)
-- **Design:** Minimalist, generous whitespace, earth-tone palette
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
+
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
+```
