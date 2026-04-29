@@ -11,6 +11,7 @@ attribute vec3 a_color;
 uniform float u_scale;
 uniform float u_aspect;
 uniform float u_offsetX;
+uniform float u_vertScale;
 
 varying float v_opacity;
 varying vec3 v_color;
@@ -18,7 +19,11 @@ varying vec3 v_color;
 void main() {
   v_opacity = a_opacity;
   v_color = a_color;
-  gl_Position = vec4(a_position.x / u_aspect + u_offsetX, a_position.y, 0.0, 1.0);
+  gl_Position = vec4(
+    a_position.x / u_aspect * u_vertScale + u_offsetX,
+    a_position.y * u_vertScale,
+    0.0, 1.0
+  );
   gl_PointSize = a_size * u_scale;
 }
 `;
@@ -280,6 +285,7 @@ export default function OrbConstellation({
     const uScale = gl.getUniformLocation(prog, "u_scale");
     const uAspect = gl.getUniformLocation(prog, "u_aspect");
     const uOffsetX = gl.getUniformLocation(prog, "u_offsetX");
+    const uVertScale = gl.getUniformLocation(prog, "u_vertScale");
 
     // Blending
     gl.enable(gl.BLEND);
@@ -325,15 +331,17 @@ export default function OrbConstellation({
     // Mouse — track in particle coordinate space
     const mouse = { x: -9999, y: -9999, active: false };
     let aspect = 1;
+    let vertScale = 1;
     const offsetX = -0.35; // shift shape left to make room for copy
+    const REF_HEIGHT = 580; // lock shape size to old container height
 
     const onMove = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect();
       const clipX = ((e.clientX - r.left) / r.width) * 2 - 1;
       const clipY = -(((e.clientY - r.top) / r.height) * 2 - 1);
-      // Convert from clip space to particle space (undo aspect + offset)
-      mouse.x = (clipX - offsetX) * aspect;
-      mouse.y = clipY;
+      // Convert from clip space to particle space (undo aspect, offset, vertScale)
+      mouse.x = (clipX - offsetX) * aspect / vertScale;
+      mouse.y = clipY / vertScale;
       mouse.active = true;
     };
     const onLeave = () => {
@@ -351,9 +359,13 @@ export default function OrbConstellation({
       canvas.height = Math.floor(r.height * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
       aspect = r.width / r.height;
-      gl.uniform1f(uScale, dpr * r.height / 115);
+      // Lock shape + orb size to reference height so they stay constant
+      vertScale = Math.min(1.0, REF_HEIGHT / r.height);
+      const effectiveH = Math.min(r.height, REF_HEIGHT);
+      gl.uniform1f(uScale, dpr * effectiveH / 115);
       gl.uniform1f(uAspect, aspect);
       gl.uniform1f(uOffsetX, offsetX);
+      gl.uniform1f(uVertScale, vertScale);
     };
 
     // Reduced motion check
