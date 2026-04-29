@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --color-paper: #F5F5F3;
+  --color-ink: #111111;
+  --color-ink-soft: #2A2A2A;
+  --color-ink-muted: #5A5A58;
+  --color-rule: #1F1F1F;
+  --color-lavender: #8E7DBE;
+  --color-lavender-soft: #B8ABD9;
+}
+
+/* OpenType features for Inter */
+body {
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selection highlight */
+::selection {
+  background-color: #8E7DBE;
+  color: #F5F5F3;
+}
+
+/* Slide animation */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.6s ease-out;
+}
+
+/* Print styles for badge printing */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .print-badge {
+    border: 1px dashed #ccc;
+    page-break-inside: avoid;
+  }
+}
+
+/* iPad touch optimizations */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  button,
+  select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+
+/* Hide scrollbar in kiosk mode */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
