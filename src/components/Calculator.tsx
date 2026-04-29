@@ -436,12 +436,12 @@ export default function Calculator({ activeEventId, onSaved }: CalculatorProps) 
                 </h3>
               </div>
               <div className="space-y-0">
-                <MetricRow label="Pipeline ROI" value={fmtPercent(metrics.pipelineROI)} muted={metrics.pipelineROI === 0} />
-                <MetricRow label="Cost per MQL" value={fmtDollar(metrics.costPerMQL)} muted={metrics.costPerMQL === 0} />
-                <MetricRow label="Cost per Opportunity" value={fmtDollar(metrics.costPerOpportunity)} muted={metrics.costPerOpportunity === 0} />
-                <MetricRow label="Cost per Meeting" value={fmtDollar(metrics.costPerMeeting)} muted={metrics.costPerMeeting === 0} />
-                <MetricRow label="Revenue per Attendee" value={fmtDollar(metrics.revenuePerAttendee)} muted={metrics.revenuePerAttendee === 0} />
-                <MetricRow label="Avg Deal Size" value={fmtDollar(metrics.avgDealSize)} muted={metrics.avgDealSize === 0} />
+                <MetricRow label="Pipeline ROI" value={fmtPercent(metrics.pipelineROI)} muted={!isFinite(metrics.pipelineROI)} />
+                <MetricRow label="Cost per MQL" value={fmtDollar(metrics.costPerMQL)} muted={!isFinite(metrics.costPerMQL)} />
+                <MetricRow label="Cost per Opportunity" value={fmtDollar(metrics.costPerOpportunity)} muted={!isFinite(metrics.costPerOpportunity)} />
+                <MetricRow label="Cost per Meeting" value={fmtDollar(metrics.costPerMeeting)} muted={!isFinite(metrics.costPerMeeting)} />
+                <MetricRow label="Revenue per Attendee" value={fmtDollar(metrics.revenuePerAttendee)} muted={!isFinite(metrics.revenuePerAttendee)} />
+                <MetricRow label="Avg Deal Size" value={fmtDollar(metrics.avgDealSize)} muted={!isFinite(metrics.avgDealSize)} />
               </div>
             </div>
           </div>
