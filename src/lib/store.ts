@@ -31,7 +31,6 @@ const checkinsListeners = new Set<() => void>();
 
 function emitCheckinsChange() {
   checkinsListeners.forEach((l) => l());
-  window.dispatchEvent(new Event("checkins-updated"));
 }
 
 function subscribeCheckins(listener: () => void): () => void {
@@ -42,14 +41,11 @@ function subscribeCheckins(listener: () => void): () => void {
       listener();
     }
   };
-  const onCustom = () => listener();
   window.addEventListener("storage", onStorage);
-  window.addEventListener("checkins-updated", onCustom);
 
   return () => {
     checkinsListeners.delete(listener);
     window.removeEventListener("storage", onStorage);
-    window.removeEventListener("checkins-updated", onCustom);
   };
 }
 

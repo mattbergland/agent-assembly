@@ -10,6 +10,8 @@ interface QrScannerProps {
 export default function QrScanner({ onScan, onCancel }: QrScannerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scannerRef = useRef<import("html5-qrcode").Html5Qrcode | null>(null);
+  const onScanRef = useRef(onScan);
+  useEffect(() => { onScanRef.current = onScan; }, [onScan]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function QrScanner({ onScan, onCancel }: QrScannerProps) {
           { fps: 10, qrbox: { width: 300, height: 300 } },
           (decodedText) => {
             scanner.stop().catch(() => {});
-            onScan(decodedText);
+            onScanRef.current(decodedText);
           },
           () => {}
         );
@@ -43,7 +45,7 @@ export default function QrScanner({ onScan, onCancel }: QrScannerProps) {
       mounted = false;
       scannerRef.current?.stop().catch(() => {});
     };
-  }, [onScan]);
+  }, []);
 
   if (error) {
     return (
