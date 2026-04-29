@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 
-export function Nav() {
+export function Nav({ extraLinks }: { extraLinks?: React.ReactNode } = {}) {
   const location = useLocation();
   const isToolkit = location.pathname.startsWith("/toolkit");
 
@@ -13,6 +13,7 @@ export function Nav() {
         </span>
       </Link>
       <nav className="flex items-center gap-6">
+        {extraLinks}
         <Link
           to="/toolkit"
           className={`text-sm transition-colors ${
