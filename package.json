@@ -12,6 +12,8 @@
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "docx": "^9.6.1",
+    "file-saver": "^2.0.5",
     "lucide-react": "^0.364.0",
     "papaparse": "^5.5.3",
     "react": "^18.3.1",
@@ -22,10 +24,12 @@
     "recharts": "^2.12.4",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^25.6.0",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^18.3.12",

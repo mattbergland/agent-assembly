@@ -26,7 +26,7 @@ const toolkitItems: ToolkitItem[] = [
     description:
       "Quantify the impact of your events with pipeline attribution, cost-per-lead analysis, and executive-ready ROI reports.",
     icon: <ROICalculatorIcon />,
-    comingSoon: true,
+    to: "/toolkit/roi-calculator",
   },
   {
     id: "seat-arrangement",
