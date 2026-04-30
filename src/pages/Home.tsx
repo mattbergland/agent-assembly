@@ -34,7 +34,8 @@ function NavLink({ to, href, label, num }: { to?: string; href?: string; label: 
   if (to) {
     return <Link to={to} className={cls}>{inner}</Link>;
   }
-  return <a href={href} className={cls}>{inner}</a>;
+  const isExternal = href?.startsWith("http");
+  return <a href={href} className={cls} {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{inner}</a>;
 }
 
 function Main() {
@@ -53,7 +54,7 @@ function Main() {
           <nav className="flex flex-col gap-2 mt-6 w-full">
             <NavLink to="/toolkit" label="Toolkit" num="01" />
             <NavLink href="#field" label="Field Notes" num="02" />
-            <NavLink href="#join" label="Join" num="03" />
+            <NavLink href="https://partiful.com/u/ax6ah3XUs6POZMwuobP6" label="Join" num="03" />
           </nav>
         </div>
       </div>
