@@ -244,11 +244,11 @@ function compileShader(
 /* ── Component ─────────────────────────────────────────────── */
 
 const PARTICLE_COUNT = 1200;
-const DISPERSE_RADIUS = 0.45;
-const DISPERSE_FORCE = 0.018;
-const SPRING = 0.008;
-const DAMPING = 0.965;
-const DRIFT = 0.00004;
+const DISPERSE_RADIUS = 0.50;
+const DISPERSE_FORCE = 0.025;
+const SPRING = 0.006;
+const DAMPING = 0.94;
+const DRIFT = 0.00006;
 
 export default function OrbConstellation({
   className = "",
