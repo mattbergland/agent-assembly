@@ -6,7 +6,7 @@ interface ScreenshotImportProps {
   onCancel: () => void
 }
 
-const API_KEY_STORAGE = 'merch-coordinator-anthropic-key'
+const API_KEY_STORAGE = 'merch-coordinator-openai-key'
 
 const categories: { value: ItemCategory; label: string }[] = [
   { value: 'apparel', label: 'Apparel' },
@@ -205,15 +205,15 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-500 flex-shrink-0">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3" />
           </svg>
-          <p className="text-xs text-amber-800 font-medium">Anthropic API Key Required</p>
+          <p className="text-xs text-amber-800 font-medium">OpenAI API Key Required</p>
         </div>
         <p className="text-[11px] text-amber-700/80">
-          Screenshot import uses Claude AI to read product details. Paste your API key below — it&apos;s stored locally in your browser.
+          Screenshot import uses GPT-4o mini to read product details. Paste your OpenAI API key below — it&apos;s stored locally in your browser.
         </p>
         <input
           value={apiKey}
           onChange={e => setApiKey(e.target.value)}
-          placeholder="sk-ant-..."
+          placeholder="sk-..."
           type="password"
           autoFocus
           className="w-full px-2.5 py-1.5 text-xs bg-white border border-amber-200 rounded-md focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-200 placeholder:text-amber-300 font-mono"

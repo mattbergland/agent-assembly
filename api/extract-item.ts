@@ -22,17 +22,17 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   const body: ExtractRequest = await request.json()
-  const apiKey = body.apiKey || process.env.ANTHROPIC_API_KEY
+  const apiKey = body.apiKey || process.env.OPENAI_API_KEY
 
   if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: 'no_api_key', message: 'No API key configured. Add your Anthropic API key in the settings.' }),
+      JSON.stringify({ error: 'no_api_key', message: 'No API key configured. Add your OpenAI API key in the settings.' }),
       { status: 401, headers: { 'Content-Type': 'application/json' } }
     )
   }
 
-  // Strip data URL prefix to get raw base64
-  const base64Match = body.image.match(/^data:image\/(\w+);base64,(.+)$/)
+  // Validate data URL format
+  const base64Match = body.image.match(/^data:image\/(\w+);base64,.+$/)
   if (!base64Match) {
     return new Response(
       JSON.stringify({ error: 'Invalid image format. Expected a base64 data URL.' }),
@@ -40,30 +40,25 @@ export default async function handler(request: Request): Promise<Response> {
     )
   }
 
-  const mediaType = `image/${base64Match[1]}` as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'
-  const base64Data = base64Match[2]
-
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
+        model: 'gpt-4o-mini',
         max_tokens: 300,
         messages: [
           {
             role: 'user',
             content: [
               {
-                type: 'image',
-                source: {
-                  type: 'base64',
-                  media_type: mediaType,
-                  data: base64Data,
+                type: 'image_url',
+                image_url: {
+                  url: body.image,
+                  detail: 'low',
                 },
               },
               {
@@ -84,13 +79,13 @@ Return ONLY the JSON object, no markdown, no explanation.`,
     if (!response.ok) {
       const errorText = await response.text()
       return new Response(
-        JSON.stringify({ error: `Anthropic API error: ${response.status}`, details: errorText }),
+        JSON.stringify({ error: `OpenAI API error: ${response.status}`, details: errorText }),
         { status: 502, headers: { 'Content-Type': 'application/json' } }
       )
     }
 
     const result = await response.json()
-    const text = result.content?.[0]?.text || ''
+    const text = result.choices?.[0]?.message?.content || ''
 
     // Parse JSON from the response, handling potential markdown code blocks
     const jsonMatch = text.match(/\{[\s\S]*\}/)
