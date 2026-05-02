@@ -106,7 +106,7 @@ export function GuidedTutorial({ items, kits, activeKit, onNewKit }: GuidedTutor
       try {
         localStorage.setItem(STORAGE_KEY, 'true')
       } catch { /* ignore */ }
-    }, 300)
+    }, 500)
   }, [])
 
   // Auto-dismiss when all steps complete and user has been on step 4 for a bit
