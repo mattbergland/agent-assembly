@@ -160,7 +160,7 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
         </button>
         <button
           type="button"
-          onClick={() => { setIsOpen(false); setName(''); setCost(''); setImageUrl(null) }}
+          onClick={() => { setIsOpen(false); setName(''); setCost(''); setImageUrl(null); setCategory('custom') }}
           className="px-3 py-1.5 text-xs text-ink-muted hover:text-ink transition-colors"
         >
           Cancel
