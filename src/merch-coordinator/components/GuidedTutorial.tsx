@@ -74,9 +74,12 @@ const STEPS: TutorialStep[] = [
 function getActiveStep(items: SwagItem[], kits: Kit[], activeKit: Kit | null): number {
   if (items.length === 0) return 0
   if (kits.length === 0) return 1
-  if (activeKit && activeKit.items.length === 0) return 2
-  if (activeKit && activeKit.items.length > 0) return 3
-  return 2
+  if (!activeKit) {
+    const anyKitHasItems = kits.some(k => k.items.length > 0)
+    return anyKitHasItems ? 3 : 2
+  }
+  if (activeKit.items.length === 0) return 2
+  return 3
 }
 
 export function GuidedTutorial({ items, kits, activeKit, onNewKit }: GuidedTutorialProps) {
@@ -90,6 +93,7 @@ export function GuidedTutorial({ items, kits, activeKit, onNewKit }: GuidedTutor
   const [visible, setVisible] = useState(false)
 
   const currentStep = getActiveStep(items, kits, activeKit)
+  const needsKitSelection = currentStep === 2 && !activeKit && kits.length > 0
   const step = STEPS[currentStep]
 
   // Animate in after a short delay
@@ -158,11 +162,17 @@ export function GuidedTutorial({ items, kits, activeKit, onNewKit }: GuidedTutor
 
             {/* Description */}
             <p className="text-xs text-ink-muted leading-relaxed">
-              {step.description}
+              {needsKitSelection
+                ? 'Click on one of your saved kits to open it, then drag items in from the left sidebar.'
+                : step.description}
             </p>
 
             {/* Action hint or New Kit button */}
-            {currentStep === 1 ? (
+            {needsKitSelection ? (
+              <p className="mt-2 text-[10px] font-medium text-lavender/70">
+                Click a kit card to open it
+              </p>
+            ) : currentStep === 1 ? (
               <button
                 onClick={onNewKit}
                 className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-lavender rounded-md hover:bg-lavender/90 transition-colors"
