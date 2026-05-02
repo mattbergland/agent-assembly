@@ -21,7 +21,15 @@ export default async function handler(request: Request): Promise<Response> {
     })
   }
 
-  const body: ExtractRequest = await request.json()
+  let body: ExtractRequest
+  try {
+    body = await request.json()
+  } catch {
+    return new Response(
+      JSON.stringify({ error: 'Invalid request body' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
   const apiKey = body.apiKey || process.env.OPENAI_API_KEY
 
   if (!apiKey) {
@@ -32,7 +40,7 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   // Validate data URL format
-  const base64Match = body.image.match(/^data:image\/(\w+);base64,.+$/)
+  const base64Match = body.image?.match(/^data:image\/(\w+);base64,.+$/)
   if (!base64Match) {
     return new Response(
       JSON.stringify({ error: 'Invalid image format. Expected a base64 data URL.' }),

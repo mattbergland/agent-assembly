@@ -28,7 +28,7 @@ type ImportState =
   | { step: 'processing'; imageUrl: string }
   | { step: 'review'; imageUrl: string; data: ExtractedData }
   | { step: 'error'; message: string; imageUrl?: string }
-  | { step: 'api_key' }
+  | { step: 'api_key'; imageUrl?: string }
 
 function resizeForAI(dataUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -115,7 +115,7 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
       const json = await res.json()
 
       if (json.error === 'no_api_key') {
-        setState({ step: 'api_key' })
+        setState({ step: 'api_key', imageUrl: dataUrl })
         return
       }
 
@@ -182,8 +182,13 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
   const handleApiKeySubmit = () => {
     if (!apiKey.trim()) return
     localStorage.setItem(API_KEY_STORAGE, apiKey.trim())
-    setState({ step: 'paste' })
+    const pendingImage = state.step === 'api_key' ? state.imageUrl : undefined
     setApiKey('')
+    if (pendingImage) {
+      processScreenshot(pendingImage)
+    } else {
+      setState({ step: 'paste' })
+    }
   }
 
   const handleConfirm = async () => {
