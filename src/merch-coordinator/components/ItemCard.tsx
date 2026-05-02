@@ -50,12 +50,31 @@ export function ItemCard({ item, onRemove, compact, showAddToKit, onAddToKit }: 
         <p className={`font-medium tracking-tight text-ink truncate ${compact ? 'text-xs' : 'text-sm'}`}>
           {item.name}
         </p>
+        {item.brand && !compact && (
+          <p className="text-[11px] text-ink-muted/70 truncate mt-0.5">{item.brand}</p>
+        )}
         <div className="flex items-center gap-2 mt-0.5">
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${categoryColors[item.category] || categoryColors.custom}`}>
             {item.category}
           </span>
           {item.unitCost > 0 && (
             <span className="text-[11px] text-ink-muted">${item.unitCost.toFixed(2)}</span>
+          )}
+          {item.link && !compact && (
+            <a
+              href={item.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={e => e.stopPropagation()}
+              className="text-[11px] text-lavender hover:text-lavender/80 transition-colors"
+              title={item.link}
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline -mt-px">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
           )}
         </div>
       </div>

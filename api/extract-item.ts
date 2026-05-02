@@ -11,6 +11,7 @@ interface ExtractedItem {
   name: string
   cost: number
   category: 'apparel' | 'tech' | 'drinkware' | 'stationery' | 'food' | 'custom'
+  brand?: string
 }
 
 export default async function handler(request: Request): Promise<Response> {
@@ -73,6 +74,7 @@ export default async function handler(request: Request): Promise<Response> {
                 type: 'text',
                 text: `Look at this product screenshot and extract the product details. Return ONLY a JSON object with these fields:
 - "name": the product name (string, keep it short — e.g. "Classic Hoodie")
+- "brand": the brand or company name (string, e.g. "Patagonia", "Nike"). If not visible, use ""
 - "cost": the unit price as a number (e.g. 29.99). If multiple prices, use the main/default one. If no price visible, use 0
 - "category": the single best match from: "apparel", "tech", "drinkware", "stationery", "food", or "custom"
 
