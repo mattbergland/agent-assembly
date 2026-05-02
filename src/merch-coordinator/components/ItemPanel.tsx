@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { SwagItem, Kit } from '../types'
 import { ItemCard } from './ItemCard'
 import { AddItemForm } from './AddItemForm'
+import { ScreenshotImport } from './ScreenshotImport'
 
 interface ItemPanelProps {
   items: SwagItem[]
@@ -14,15 +15,21 @@ interface ItemPanelProps {
 
 export function ItemPanel({ items, onAdd, onRemove, activeKit, onAddItemToKit, onClose }: ItemPanelProps) {
   const [search, setSearch] = useState('')
+  const [showScreenshot, setShowScreenshot] = useState(false)
 
   const filtered = items.filter(i =>
     i.name.toLowerCase().includes(search.toLowerCase()) ||
     i.category.toLowerCase().includes(search.toLowerCase())
   )
 
+  const handleScreenshotAdd = (item: Omit<SwagItem, 'id'>) => {
+    onAdd(item)
+    setShowScreenshot(false)
+  }
+
   return (
     <div className="w-full h-full flex-shrink-0 flex flex-col border-r border-rule/10 bg-paper overflow-hidden">
-      <div className="p-4 space-y-4 border-b border-rule/10">
+      <div className="p-4 space-y-3 border-b border-rule/10">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium tracking-tight text-ink">Items</h2>
           <div className="flex items-center gap-2">
@@ -41,6 +48,20 @@ export function ItemPanel({ items, onAdd, onRemove, activeKit, onAddItemToKit, o
           </div>
         </div>
         <AddItemForm onAdd={onAdd} />
+        {showScreenshot ? (
+          <ScreenshotImport onAdd={handleScreenshotAdd} onCancel={() => setShowScreenshot(false)} />
+        ) : (
+          <button
+            onClick={() => setShowScreenshot(true)}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-ink-muted border border-dashed border-rule/20 rounded-lg hover:border-lavender/30 hover:text-lavender transition-colors"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            Add from Screenshot
+          </button>
+        )}
       </div>
 
       {items.length > 3 && (
