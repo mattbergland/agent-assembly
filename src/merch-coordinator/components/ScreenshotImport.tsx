@@ -299,8 +299,8 @@ export function ScreenshotImport({ onAdd, onCancel, initialImage }: ScreenshotIm
       <div className="space-y-2">
         <div
           ref={dropRef}
-          onDragOver={e => { e.preventDefault(); setIsDragOver(true) }}
-          onDragLeave={() => setIsDragOver(false)}
+          onDragOver={e => { e.preventDefault(); e.stopPropagation(); setIsDragOver(true) }}
+          onDragLeave={e => { e.stopPropagation(); setIsDragOver(false) }}
           onDrop={handleDrop}
           className={`relative flex flex-col items-center justify-center gap-2 p-5 rounded-lg border-2 border-dashed transition-colors cursor-pointer ${
             isDragOver
