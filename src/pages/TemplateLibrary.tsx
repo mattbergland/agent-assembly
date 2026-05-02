@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { LogoMark, Footer } from "@/components/Layout";
+import { ToolLayout, Footer } from "@/components/Layout";
 import TemplateCard from "@/components/TemplateCard";
 import { templates } from "@/data/templates";
 import "../App.css";
@@ -15,40 +14,7 @@ export default function TemplateLibrary() {
     : templates;
 
   return (
-    <div className="min-h-screen bg-paper text-ink font-sans antialiased flex flex-col">
-      {/* Tool header */}
-      <header className="flex items-center justify-between px-6 md:px-10 py-5 flex-none">
-        <div className="flex flex-col gap-1">
-          <Link
-            to="/"
-            className="flex items-center gap-2.5 hover:opacity-70 transition-opacity"
-          >
-            <LogoMark />
-            <span className="text-sm tracking-tight font-medium">
-              Template Library
-            </span>
-          </Link>
-          <Link
-            to="/toolkit"
-            className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-lavender transition-colors"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            Back to Toolkit
-          </Link>
-        </div>
-      </header>
-
+    <ToolLayout title="Template Library">
       <main className="flex-1 px-6 md:px-10 pb-16">
         <div className="max-w-7xl mx-auto">
           {/* Page header */}
@@ -117,6 +83,6 @@ export default function TemplateLibrary() {
       </main>
 
       <Footer />
-    </div>
+    </ToolLayout>
   );
 }

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 export function Nav() {
@@ -126,5 +127,88 @@ export function Footer() {
         </a>
       </div>
     </footer>
+  );
+}
+
+interface ToolHeaderProps {
+  title: string;
+  backTo?: string;
+  backLabel?: string;
+  headerRight?: ReactNode;
+}
+
+export function ToolHeader({
+  title,
+  backTo = "/toolkit",
+  backLabel = "Back to Toolkit",
+  headerRight,
+}: ToolHeaderProps) {
+  return (
+    <header className="flex items-center justify-between px-6 py-4 flex-none">
+      <div className="flex flex-col gap-2">
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 hover:opacity-70 transition-opacity"
+        >
+          <LogoMark />
+          <span className="text-sm tracking-tight font-medium">{title}</span>
+        </Link>
+        <Link
+          to={backTo}
+          className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-lavender transition-colors"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          {backLabel}
+        </Link>
+      </div>
+      {headerRight && (
+        <div className="flex items-center gap-6">{headerRight}</div>
+      )}
+    </header>
+  );
+}
+
+interface ToolLayoutProps {
+  title: string;
+  backTo?: string;
+  backLabel?: string;
+  headerRight?: ReactNode;
+  children: ReactNode;
+  fullScreen?: boolean;
+}
+
+export function ToolLayout({
+  title,
+  backTo,
+  backLabel,
+  headerRight,
+  children,
+  fullScreen = false,
+}: ToolLayoutProps) {
+  return (
+    <div
+      className={`${
+        fullScreen ? "h-screen overflow-hidden" : "min-h-screen"
+      } bg-paper text-ink font-sans antialiased flex flex-col`}
+    >
+      <ToolHeader
+        title={title}
+        backTo={backTo}
+        backLabel={backLabel}
+        headerRight={headerRight}
+      />
+      {children}
+    </div>
   );
 }

@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { LogoMark } from "@/components/Layout";
+import { ToolLayout } from "@/components/Layout";
 import { useAppState } from "@/seating-planner/store";
 import { GuestPanel } from "@/seating-planner/components/GuestPanel";
 import { FloorPlan } from "@/seating-planner/components/FloorPlan";
@@ -28,39 +27,11 @@ export default function SeatArrangement() {
   const seatedCount = guests.length - unseatedGuests.length;
 
   return (
-    <div className="h-screen bg-paper text-ink font-sans antialiased flex flex-col overflow-hidden">
-      {/* Tool header */}
-      <header className="flex items-center justify-between px-6 py-4 flex-none">
-        <div className="flex flex-col gap-2">
-          <Link
-            to="/"
-            className="flex items-center gap-2.5 hover:opacity-70 transition-opacity"
-          >
-            <LogoMark />
-            <span className="text-sm tracking-tight font-medium">
-              Seating Planner
-            </span>
-          </Link>
-          <Link
-            to="/toolkit"
-            className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-lavender transition-colors"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            Back to Toolkit
-          </Link>
-        </div>
-        <div className="flex items-center gap-6">
+    <ToolLayout
+      title="Seating Planner"
+      fullScreen
+      headerRight={
+        <>
           <div className="flex items-center gap-4 text-sm text-ink-muted">
             <span>
               {guests.length} guest{guests.length !== 1 ? "s" : ""}
@@ -80,9 +51,9 @@ export default function SeatArrangement() {
               Clear all
             </button>
           )}
-        </div>
-      </header>
-
+        </>
+      }
+    >
       {/* Seating planner app */}
       <DndProvider backend={HTML5Backend}>
         <div className="flex-1 flex overflow-hidden">
@@ -106,6 +77,6 @@ export default function SeatArrangement() {
           />
         </div>
       </DndProvider>
-    </div>
+    </ToolLayout>
   );
 }
