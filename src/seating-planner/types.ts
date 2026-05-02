@@ -20,6 +20,15 @@ export interface Table {
   shape: TableShape
 }
 
+export interface Project {
+  id: string
+  name: string
+  guests: Guest[]
+  tables: Table[]
+  createdAt: number
+  updatedAt: number
+}
+
 export type DragItem = {
   type: 'GUEST'
   guestId: string
