@@ -11,9 +11,10 @@ interface GuestPanelProps {
   onAddMany: (guests: Omit<Guest, 'id'>[]) => void
   onUpdate: (id: string, data: Partial<Guest>) => void
   onRemove: (id: string) => void
+  onClose?: () => void
 }
 
-export function GuestPanel({ guests, unseatedGuests, onAdd, onAddMany, onUpdate, onRemove }: GuestPanelProps) {
+export function GuestPanel({ guests, unseatedGuests, onAdd, onAddMany, onUpdate, onRemove, onClose }: GuestPanelProps) {
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null)
   const [search, setSearch] = useState('')
 
@@ -26,11 +27,24 @@ export function GuestPanel({ guests, unseatedGuests, onAdd, onAddMany, onUpdate,
   )
 
   return (
-    <div className="w-[340px] flex-shrink-0 flex flex-col h-full border-r border-rule/10 bg-paper overflow-hidden">
+    <div className="w-full h-full flex-shrink-0 flex flex-col border-r border-rule/10 bg-paper overflow-hidden">
       <div className="p-4 space-y-4 border-b border-rule/10">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium tracking-tight text-ink">Guests</h2>
-          <span className="text-xs text-ink-muted">{unseatedGuests.length} unseated</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-ink-muted">{unseatedGuests.length} unseated</span>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="md:hidden w-6 h-6 flex items-center justify-center rounded-full text-ink-muted hover:text-ink hover:bg-ink/5 transition-colors"
+                aria-label="Close panel"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
         {editingGuest ? (

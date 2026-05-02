@@ -5,6 +5,8 @@ interface ItemCardProps {
   item: SwagItem
   onRemove: (id: string) => void
   compact?: boolean
+  showAddToKit?: boolean
+  onAddToKit?: () => void
 }
 
 const categoryColors: Record<string, string> = {
@@ -16,7 +18,7 @@ const categoryColors: Record<string, string> = {
   custom: 'bg-gray-100 text-gray-600',
 }
 
-export function ItemCard({ item, onRemove, compact }: ItemCardProps) {
+export function ItemCard({ item, onRemove, compact, showAddToKit, onAddToKit }: ItemCardProps) {
   const [{ isDragging }, drag] = useDrag<DragItemType, void, { isDragging: boolean }>(() => ({
     type: 'SWAG_ITEM',
     item: { type: 'SWAG_ITEM', itemId: item.id },
@@ -58,6 +60,19 @@ export function ItemCard({ item, onRemove, compact }: ItemCardProps) {
         </div>
       </div>
 
+      {/* Add-to-kit button (mobile tap alternative to drag) */}
+      {showAddToKit && onAddToKit && !compact && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onAddToKit() }}
+          className="w-7 h-7 flex items-center justify-center rounded-md border border-lavender/30 text-lavender hover:bg-lavender/10 transition-colors flex-shrink-0 md:hidden"
+          title="Add to kit"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
+      )}
+
       {/* Remove button */}
       {!compact && (
         <button
@@ -70,8 +85,8 @@ export function ItemCard({ item, onRemove, compact }: ItemCardProps) {
         </button>
       )}
 
-      {/* Drag hint */}
-      <div className={`flex-shrink-0 text-ink-muted/30 group-hover:text-ink-muted/60 transition-colors ${compact ? 'hidden' : ''}`}>
+      {/* Drag hint — desktop only */}
+      <div className={`flex-shrink-0 text-ink-muted/30 group-hover:text-ink-muted/60 transition-colors hidden md:block ${compact ? 'hidden' : ''}`}>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
           <circle cx="9" cy="5" r="2" />
           <circle cx="15" cy="5" r="2" />
