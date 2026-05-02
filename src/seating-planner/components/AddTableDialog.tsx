@@ -41,7 +41,7 @@ export function AddTableDialog({ tableCount, onAdd, onClose }: AddTableDialogPro
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/20" onClick={onClose}>
-      <div className="bg-paper border border-rule/10 rounded-xl shadow-lg p-6 w-96 space-y-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <div className="bg-paper border border-rule/10 rounded-xl shadow-lg p-5 sm:p-6 w-[calc(100vw-2rem)] sm:w-96 space-y-4 max-h-[90vh] overflow-y-auto mx-4 sm:mx-0" onClick={e => e.stopPropagation()}>
         <h3 className="text-sm font-medium tracking-tight text-ink">Add Table</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

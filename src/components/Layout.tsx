@@ -144,18 +144,18 @@ export function ToolHeader({
   headerRight,
 }: ToolHeaderProps) {
   return (
-    <header className="flex items-center justify-between px-6 py-4 flex-none">
-      <div className="flex flex-col gap-2">
+    <header className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 flex-none gap-2">
+      <div className="flex flex-col gap-1 sm:gap-2 min-w-0">
         <Link
           to="/"
-          className="flex items-center gap-2.5 hover:opacity-70 transition-opacity"
+          className="flex items-center gap-2 sm:gap-2.5 hover:opacity-70 transition-opacity"
         >
           <LogoMark />
-          <span className="text-sm tracking-tight font-medium">{title}</span>
+          <span className="text-xs sm:text-sm tracking-tight font-medium truncate">{title}</span>
         </Link>
         <Link
           to={backTo}
-          className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-lavender transition-colors"
+          className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs text-ink-muted hover:text-lavender transition-colors"
         >
           <svg
             width="14"
@@ -173,7 +173,7 @@ export function ToolHeader({
         </Link>
       </div>
       {headerRight && (
-        <div className="flex items-center gap-6">{headerRight}</div>
+        <div className="flex items-center gap-3 sm:gap-6 flex-shrink-0">{headerRight}</div>
       )}
     </header>
   );
