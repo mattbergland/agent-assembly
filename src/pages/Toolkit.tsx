@@ -37,6 +37,14 @@ const toolkitItems: ToolkitItem[] = [
     to: "/toolkit/seat-arrangement",
   },
   {
+    id: "merch-coordinator",
+    title: "Merch Coordinator",
+    description:
+      "Build swag kits with drag-and-drop, choose packaging, preview personal notes, and track costs across recipient tiers.",
+    icon: <MerchCoordinatorIcon />,
+    to: "/toolkit/merch-coordinator",
+  },
+  {
     id: "featured-venues",
     title: "Featured Venues",
     description:
@@ -261,6 +269,27 @@ function ExperienceLibraryIcon() {
       strokeLinejoin="round"
     >
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+function MerchCoordinatorIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M20 12v10H4V12" />
+      <rect x="2" y="7" width="20" height="5" />
+      <line x1="12" y1="22" x2="12" y2="7" />
+      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
     </svg>
   );
 }
