@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import type { SwagItem, Kit } from '../types'
 import { ItemCard } from './ItemCard'
 import { AddItemForm } from './AddItemForm'
@@ -8,14 +8,26 @@ interface ItemPanelProps {
   items: SwagItem[]
   onAdd: (item: Omit<SwagItem, 'id'>) => void
   onRemove: (id: string) => void
+  onEdit?: (id: string) => void
   activeKit?: Kit | null
   onAddItemToKit?: (itemId: string) => void
   onClose?: () => void
 }
 
-export function ItemPanel({ items, onAdd, onRemove, activeKit, onAddItemToKit, onClose }: ItemPanelProps) {
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
+export function ItemPanel({ items, onAdd, onRemove, onEdit, activeKit, onAddItemToKit, onClose }: ItemPanelProps) {
   const [search, setSearch] = useState('')
   const [showScreenshot, setShowScreenshot] = useState(false)
+  const [isDragOver, setIsDragOver] = useState(false)
+  const [droppedImage, setDroppedImage] = useState<string | null>(null)
 
   const filtered = items.filter(i =>
     i.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -25,10 +37,48 @@ export function ItemPanel({ items, onAdd, onRemove, activeKit, onAddItemToKit, o
   const handleScreenshotAdd = (item: Omit<SwagItem, 'id'>) => {
     onAdd(item)
     setShowScreenshot(false)
+    setDroppedImage(null)
   }
 
+  const handleFileDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(false)
+    const file = e.dataTransfer.files[0]
+    if (file && file.type.startsWith('image/')) {
+      readFileAsDataUrl(file).then(dataUrl => {
+        setDroppedImage(dataUrl)
+        setShowScreenshot(true)
+      })
+    }
+  }, [])
+
   return (
-    <div className="w-full h-full flex-shrink-0 flex flex-col border-r border-rule/10 bg-paper overflow-hidden">
+    <div
+      className={`w-full h-full flex-shrink-0 flex flex-col border-r border-rule/10 bg-paper overflow-hidden relative ${
+        isDragOver ? 'ring-2 ring-inset ring-lavender/40' : ''
+      }`}
+      onDragOver={e => {
+        if (e.dataTransfer.types.includes('Files')) {
+          e.preventDefault()
+          setIsDragOver(true)
+        }
+      }}
+      onDragLeave={e => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setIsDragOver(false)
+      }}
+      onDrop={handleFileDrop}
+    >
+      {isDragOver && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-lavender/10 backdrop-blur-[1px] pointer-events-none">
+          <div className="flex flex-col items-center gap-2 text-lavender">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            <p className="text-xs font-medium">Drop screenshot to import</p>
+          </div>
+        </div>
+      )}
       <div className="p-4 space-y-3 border-b border-rule/10">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium tracking-tight text-ink">Items</h2>
@@ -49,7 +99,7 @@ export function ItemPanel({ items, onAdd, onRemove, activeKit, onAddItemToKit, o
         </div>
         <AddItemForm onAdd={onAdd} />
         {showScreenshot ? (
-          <ScreenshotImport onAdd={handleScreenshotAdd} onCancel={() => setShowScreenshot(false)} />
+          <ScreenshotImport onAdd={handleScreenshotAdd} onCancel={() => { setShowScreenshot(false); setDroppedImage(null) }} initialImage={droppedImage} />
         ) : (
           <button
             onClick={() => setShowScreenshot(true)}
@@ -90,6 +140,7 @@ export function ItemPanel({ items, onAdd, onRemove, activeKit, onAddItemToKit, o
             key={item.id}
             item={item}
             onRemove={onRemove}
+            onEdit={onEdit ? () => onEdit(item.id) : undefined}
             showAddToKit={!!activeKit && !!onAddItemToKit}
             onAddToKit={onAddItemToKit ? () => onAddItemToKit(item.id) : undefined}
           />
