@@ -31,7 +31,7 @@ export default function SeatArrangement() {
     <div className="h-screen bg-paper text-ink font-sans antialiased flex flex-col overflow-hidden">
       {/* Tool header */}
       <header className="flex items-center justify-between px-6 py-4 flex-none">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <Link
             to="/"
             className="flex items-center gap-2.5 hover:opacity-70 transition-opacity"
