@@ -27,6 +27,8 @@ export function FloorPlan({ tables, guests, onAssign, onUnassign, onAddTable, on
   const panStart = useRef({ x: 0, y: 0 })
   const panOrigin = useRef({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const touchCount = useRef(0)
+  const lastTouchDist = useRef(0)
 
   const [, floorDrop] = useDrop<DragItem>(() => ({
     accept: 'GUEST',
@@ -52,6 +54,7 @@ export function FloorPlan({ tables, guests, onAssign, onUnassign, onAddTable, on
     return () => el.removeEventListener('wheel', handleWheel)
   }, [handleWheel])
 
+  // Mouse pan (Alt+drag or middle-click)
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button === 1 || (e.button === 0 && e.altKey)) {
       e.preventDefault()
@@ -73,6 +76,49 @@ export function FloorPlan({ tables, guests, onAssign, onUnassign, onAddTable, on
     setIsPanning(false)
   }, [])
 
+  // Touch pan (two-finger drag) and pinch-to-zoom
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchCount.current = e.touches.length
+    if (e.touches.length === 2) {
+      e.preventDefault()
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      lastTouchDist.current = Math.sqrt(dx * dx + dy * dy)
+      const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2
+      const my = (e.touches[0].clientY + e.touches[1].clientY) / 2
+      panStart.current = { x: mx, y: my }
+      panOrigin.current = { ...pan }
+      setIsPanning(true)
+    }
+  }, [pan])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      e.preventDefault()
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      if (lastTouchDist.current > 0) {
+        const scale = dist / lastTouchDist.current
+        setZoom(z => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z * scale)))
+      }
+      lastTouchDist.current = dist
+
+      const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2
+      const my = (e.touches[0].clientY + e.touches[1].clientY) / 2
+      setPan({
+        x: panOrigin.current.x + (mx - panStart.current.x),
+        y: panOrigin.current.y + (my - panStart.current.y),
+      })
+    }
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    touchCount.current = 0
+    lastTouchDist.current = 0
+    setIsPanning(false)
+  }, [])
+
   const handleZoomIn = () => setZoom(z => Math.min(MAX_ZOOM, z + ZOOM_STEP))
   const handleZoomOut = () => setZoom(z => Math.max(MIN_ZOOM, z - ZOOM_STEP))
   const handleResetView = () => { setZoom(1); setPan({ x: 0, y: 0 }) }
@@ -82,14 +128,17 @@ export function FloorPlan({ tables, guests, onAssign, onUnassign, onAddTable, on
   return (
     <div
       ref={setFloorRef}
-      className={`flex-1 h-full overflow-hidden bg-paper/50 relative ${isPanning ? 'cursor-grabbing' : ''}`}
+      className={`flex-1 min-w-0 h-full overflow-hidden bg-paper/50 relative ${isPanning ? 'cursor-grabbing' : ''}`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {tables.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-full text-center px-8">
+        <div className="flex flex-col items-center justify-center h-full text-center px-6 sm:px-8">
           <div className="w-20 h-20 rounded-full bg-lavender/10 flex items-center justify-center mb-4">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8E7DBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
@@ -110,7 +159,7 @@ export function FloorPlan({ tables, guests, onAssign, onUnassign, onAddTable, on
         </div>
       ) : (
         <>
-          <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-6 py-4 pointer-events-none">
+          <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 pointer-events-none">
             <h2 className="text-sm font-medium tracking-tight text-ink pointer-events-auto">Floor Plan</h2>
             <button
               onClick={() => setShowAddTable(true)}
@@ -129,7 +178,7 @@ export function FloorPlan({ tables, guests, onAssign, onUnassign, onAddTable, on
               transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             }}
           >
-            <div className="flex flex-wrap gap-12 items-start justify-center p-8">
+            <div className="flex flex-wrap gap-6 sm:gap-12 items-start justify-center p-4 sm:p-8">
               {tables.map(table => (
                 <TableView
                   key={table.id}
@@ -171,8 +220,11 @@ export function FloorPlan({ tables, guests, onAssign, onUnassign, onAddTable, on
 
           {zoom !== 1 || pan.x !== 0 || pan.y !== 0 ? (
             <div className="absolute bottom-4 left-4 z-10">
-              <p className="text-[10px] text-ink-muted/60 bg-paper/80 backdrop-blur-sm rounded px-2 py-1">
+              <p className="hidden sm:block text-[10px] text-ink-muted/60 bg-paper/80 backdrop-blur-sm rounded px-2 py-1">
                 Ctrl+scroll to zoom · Alt+drag to pan
+              </p>
+              <p className="sm:hidden text-[10px] text-ink-muted/60 bg-paper/80 backdrop-blur-sm rounded px-2 py-1">
+                Pinch to zoom · Two-finger drag to pan
               </p>
             </div>
           ) : null}

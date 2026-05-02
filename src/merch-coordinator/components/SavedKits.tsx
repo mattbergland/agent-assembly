@@ -27,7 +27,7 @@ export function SavedKits({ kits, items, onSelect, onRemove, onDuplicate, getKit
   const sorted = [...kits].sort((a, b) => b.createdAt - a.createdAt)
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
       {sorted.map(kit => {
         const kitItems = kit.items
           .map(ki => items.find(i => i.id === ki.itemId))
