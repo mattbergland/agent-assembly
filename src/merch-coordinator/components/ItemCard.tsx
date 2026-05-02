@@ -15,6 +15,10 @@ const categoryColors: Record<string, string> = {
   drinkware: 'bg-amber-100 text-amber-700',
   stationery: 'bg-green-100 text-green-700',
   food: 'bg-red-100 text-red-700',
+  travel: 'bg-sky-100 text-sky-700',
+  wellness: 'bg-emerald-100 text-emerald-700',
+  bags: 'bg-orange-100 text-orange-700',
+  accessories: 'bg-pink-100 text-pink-700',
   custom: 'bg-gray-100 text-gray-600',
 }
 

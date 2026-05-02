@@ -14,6 +14,10 @@ const categories: { value: ItemCategory; label: string }[] = [
   { value: 'drinkware', label: 'Drinkware' },
   { value: 'stationery', label: 'Stationery' },
   { value: 'food', label: 'Food' },
+  { value: 'travel', label: 'Travel' },
+  { value: 'wellness', label: 'Wellness' },
+  { value: 'bags', label: 'Bags' },
+  { value: 'accessories', label: 'Accessories' },
   { value: 'custom', label: 'Custom' },
 ]
 

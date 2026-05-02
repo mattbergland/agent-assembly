@@ -2,7 +2,7 @@ export type RecipientTier = 'executives' | 'ambassadors' | 'power-users' | 'even
 
 export type PackagingType = 'box' | 'bag' | 'envelope' | 'mailer'
 
-export type ItemCategory = 'apparel' | 'tech' | 'drinkware' | 'stationery' | 'food' | 'custom'
+export type ItemCategory = 'apparel' | 'tech' | 'drinkware' | 'stationery' | 'food' | 'travel' | 'wellness' | 'bags' | 'accessories' | 'custom'
 
 export interface SwagItem {
   id: string
