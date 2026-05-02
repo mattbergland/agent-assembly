@@ -53,7 +53,7 @@ function Main() {
 
           <nav className="flex flex-col gap-2 mt-6 w-full">
             <NavLink to="/toolkit" label="Toolkit" num="01" />
-            <NavLink href="#field" label="Field Notes" num="02" />
+            <NavLink href="https://www.linkedin.com/in/mattbergland/recent-activity/articles/" label="Field Notes" num="02" />
             <NavLink href="https://partiful.com/u/ax6ah3XUs6POZMwuobP6" label="Join" num="03" />
           </nav>
         </div>
