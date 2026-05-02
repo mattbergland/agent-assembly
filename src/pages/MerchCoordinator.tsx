@@ -4,6 +4,7 @@ import { ToolLayout } from "@/components/Layout";
 import { useMerchStore } from "@/merch-coordinator/store";
 import { ItemPanel } from "@/merch-coordinator/components/ItemPanel";
 import { KitBuilder } from "@/merch-coordinator/components/KitBuilder";
+import { GuidedTutorial } from "@/merch-coordinator/components/GuidedTutorial";
 import "../App.css";
 
 export default function MerchCoordinator() {
@@ -62,6 +63,12 @@ export default function MerchCoordinator() {
             getKitCost={getKitCost}
           />
         </div>
+        <GuidedTutorial
+          items={items}
+          kits={kits}
+          activeKit={activeKit}
+          onNewKit={newKit}
+        />
       </DndProvider>
     </ToolLayout>
   );
