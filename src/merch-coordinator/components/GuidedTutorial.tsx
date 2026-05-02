@@ -76,7 +76,7 @@ function getActiveStep(items: SwagItem[], kits: Kit[], activeKit: Kit | null): n
   if (kits.length === 0) return 1
   if (activeKit && activeKit.items.length === 0) return 2
   if (activeKit && activeKit.items.length > 0) return 3
-  return 3
+  return 2
 }
 
 export function GuidedTutorial({ items, kits, activeKit, onNewKit }: GuidedTutorialProps) {
