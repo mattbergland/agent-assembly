@@ -305,12 +305,12 @@ export function KitBuilder({
               <div className="flex items-center justify-between text-sm">
                 <span className="text-ink-muted">Cost per kit</span>
                 <span className={`font-medium ${
-                  activeKit.budgetPerPerson && kitCost > activeKit.budgetPerPerson
+                  activeKit.budgetPerPerson != null && kitCost > activeKit.budgetPerPerson
                     ? 'text-red-600'
                     : 'text-ink'
                 }`}>
                   ${kitCost.toFixed(2)}
-                  {activeKit.budgetPerPerson !== undefined && activeKit.budgetPerPerson > 0 && (
+                  {activeKit.budgetPerPerson != null && (
                     <span className={`text-[10px] ml-1 ${
                       kitCost > activeKit.budgetPerPerson ? 'text-red-500' : 'text-emerald-600'
                     }`}>
