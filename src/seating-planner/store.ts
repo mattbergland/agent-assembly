@@ -57,7 +57,9 @@ function loadProjects(): ProjectsState {
 
   const migrated = migrateLegacyState()
   if (migrated) {
-    return { projects: [migrated], activeProjectId: migrated.id }
+    const state = { projects: [migrated], activeProjectId: migrated.id }
+    saveProjects(state.projects, state.activeProjectId)
+    return state
   }
 
   return { projects: [], activeProjectId: null }

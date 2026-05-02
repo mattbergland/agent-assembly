@@ -28,6 +28,7 @@ export function ProjectSelector({
   const dropdownRef = useRef<HTMLDivElement>(null)
   const editInputRef = useRef<HTMLInputElement>(null)
   const newInputRef = useRef<HTMLInputElement>(null)
+  const shouldCommitRename = useRef(true)
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -50,12 +51,13 @@ export function ProjectSelector({
   }, [showNewInput])
 
   const handleStartRename = (project: Project) => {
+    shouldCommitRename.current = true
     setEditingId(project.id)
     setEditName(project.name)
   }
 
   const handleFinishRename = () => {
-    if (editingId && editName.trim()) {
+    if (shouldCommitRename.current && editingId && editName.trim()) {
       onRename(editingId, editName.trim())
     }
     setEditingId(null)
@@ -124,7 +126,7 @@ export function ProjectSelector({
                     onBlur={handleFinishRename}
                     onKeyDown={e => {
                       if (e.key === 'Enter') handleFinishRename()
-                      if (e.key === 'Escape') setEditingId(null)
+                      if (e.key === 'Escape') { shouldCommitRename.current = false; setEditingId(null) }
                     }}
                     className="flex-1 text-sm bg-transparent border-b border-lavender/40 focus:outline-none px-0 py-0"
                   />
