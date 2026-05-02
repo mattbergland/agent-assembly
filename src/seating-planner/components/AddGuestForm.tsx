@@ -64,20 +64,18 @@ export function AddGuestForm({ onAdd, editGuest, onUpdate, onCancel }: AddGuestF
           required
         />
       </div>
-      <div className="flex gap-2">
-        <input
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          placeholder="Title"
-          className="flex-1 px-3 py-2 text-sm bg-white border border-rule/10 rounded-lg focus:outline-none focus:border-lavender/50 focus:ring-1 focus:ring-lavender/20 placeholder:text-ink-muted/50"
-        />
-        <input
-          value={company}
-          onChange={e => setCompany(e.target.value)}
-          placeholder="Company"
-          className="flex-1 px-3 py-2 text-sm bg-white border border-rule/10 rounded-lg focus:outline-none focus:border-lavender/50 focus:ring-1 focus:ring-lavender/20 placeholder:text-ink-muted/50"
-        />
-      </div>
+      <input
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+        placeholder="Title"
+        className="w-full px-3 py-2 text-sm bg-white border border-rule/10 rounded-lg focus:outline-none focus:border-lavender/50 focus:ring-1 focus:ring-lavender/20 placeholder:text-ink-muted/50"
+      />
+      <input
+        value={company}
+        onChange={e => setCompany(e.target.value)}
+        placeholder="Company"
+        className="w-full px-3 py-2 text-sm bg-white border border-rule/10 rounded-lg focus:outline-none focus:border-lavender/50 focus:ring-1 focus:ring-lavender/20 placeholder:text-ink-muted/50"
+      />
       <div className="flex gap-2">
         <button
           type="submit"
