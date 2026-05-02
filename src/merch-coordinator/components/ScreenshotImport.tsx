@@ -98,7 +98,13 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const processScreenshot = useCallback(async (dataUrl: string) => {
-    const aiImage = await resizeForAI(dataUrl)
+    let aiImage: string
+    try {
+      aiImage = await resizeForAI(dataUrl)
+    } catch {
+      setState({ step: 'error', message: 'Failed to process image', imageUrl: dataUrl })
+      return
+    }
     setState({ step: 'processing', imageUrl: dataUrl })
 
     const storedKey = localStorage.getItem(API_KEY_STORAGE)
