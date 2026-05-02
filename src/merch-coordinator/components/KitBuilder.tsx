@@ -87,13 +87,14 @@ export function KitBuilder({
 }: KitBuilderProps) {
   const [{ isOver }, drop] = useDrop<DragItemType, void, { isOver: boolean }>(() => ({
     accept: 'SWAG_ITEM',
-    drop: (dragItem) => {
+    drop: (dragItem, monitor) => {
+      if (monitor.didDrop()) return
       if (activeKit) {
         onAddItemToKit(activeKit.id, dragItem.itemId)
       }
     },
     canDrop: () => !!activeKit,
-    collect: (monitor) => ({ isOver: monitor.isOver() && !!activeKit }),
+    collect: (monitor) => ({ isOver: monitor.isOver({ shallow: true }) && !!activeKit }),
   }), [activeKit, onAddItemToKit])
 
   if (!activeKit) {
