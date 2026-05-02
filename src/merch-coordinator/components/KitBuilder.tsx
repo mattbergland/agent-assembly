@@ -99,10 +99,10 @@ export function KitBuilder({
 
   if (!activeKit) {
     return (
-      <div ref={drop} className="flex-1 h-full overflow-hidden bg-paper/50 relative flex">
+      <div ref={drop} className="flex-1 min-w-0 h-full overflow-hidden bg-paper/50 relative flex">
         {/* Empty state or saved kits */}
         {kits.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-6 sm:px-8">
             <div className="w-20 h-20 rounded-full bg-lavender/10 flex items-center justify-center mb-4">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8E7DBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 12v10H4V12" />
@@ -125,8 +125,8 @@ export function KitBuilder({
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h2 className="text-lg font-medium tracking-tight text-ink">Saved Kits</h2>
                 <button
                   onClick={onNewKit}
@@ -157,7 +157,7 @@ export function KitBuilder({
   const totalCost = kitCost * activeKit.recipientCount
 
   return (
-    <div ref={drop} className={`flex-1 h-full overflow-y-auto bg-paper/50 relative transition-colors duration-200 ${isOver ? 'bg-lavender/5' : ''}`}>
+    <div ref={drop} className={`flex-1 min-w-0 h-full overflow-y-auto bg-paper/50 relative transition-colors duration-200 ${isOver ? 'bg-lavender/5' : ''}`}>
       {/* Drop indicator overlay */}
       {isOver && (
         <div className="absolute inset-0 border-2 border-dashed border-lavender/40 rounded-lg z-20 pointer-events-none flex items-center justify-center">
@@ -167,7 +167,7 @@ export function KitBuilder({
         </div>
       )}
 
-      <div className="p-6 max-w-3xl mx-auto space-y-6">
+      <div className="p-4 sm:p-6 max-w-3xl mx-auto space-y-4 sm:space-y-6">
         {/* Back to kits + kit name */}
         <div className="flex items-center gap-3">
           <button
@@ -193,12 +193,12 @@ export function KitBuilder({
           <label className="text-[11px] font-medium text-ink-muted uppercase tracking-wide mb-2 block">
             Recipient Tier
           </label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {tierOptions.map(t => (
               <button
                 key={t.value}
                 onClick={() => onUpdateKit(activeKit.id, { tier: t.value })}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium rounded-full transition-all duration-200 ${
                   activeKit.tier === t.value
                     ? 'bg-lavender text-white shadow-sm'
                     : 'bg-white border border-rule/10 text-ink-muted hover:border-lavender/30 hover:text-ink'
@@ -215,7 +215,7 @@ export function KitBuilder({
           <label className="text-[11px] font-medium text-ink-muted uppercase tracking-wide mb-2 block">
             Packaging
           </label>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {packagingOptions.map(p => (
               <button
                 key={p.value}
