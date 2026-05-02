@@ -215,6 +215,7 @@ export function ScreenshotImport({ onAdd, onCancel, initialImage }: ScreenshotIm
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     setIsDragOver(false)
     if (state.step !== 'paste') return
     const file = e.dataTransfer.files[0]
