@@ -67,7 +67,12 @@ export function KitContents({ kit, items, onUpdateQuantity, onRemoveItem, onAddI
                 {/* Name + cost */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium tracking-tight text-ink truncate">{item.name}</p>
-                  <p className="text-[11px] text-ink-muted">${(item.unitCost * quantity).toFixed(2)}</p>
+                  <div className="flex items-center gap-2">
+                    {item.brand && (
+                      <span className="text-[10px] text-ink-muted/60 truncate">{item.brand}</span>
+                    )}
+                    <span className="text-[11px] text-ink-muted">${(item.unitCost * quantity).toFixed(2)}</span>
+                  </div>
                 </div>
 
                 {/* Quantity controls */}

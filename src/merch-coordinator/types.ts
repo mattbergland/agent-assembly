@@ -7,6 +7,8 @@ export type ItemCategory = 'apparel' | 'tech' | 'drinkware' | 'stationery' | 'fo
 export interface SwagItem {
   id: string
   name: string
+  brand?: string
+  link?: string
   imageUrl: string | null
   category: ItemCategory
   unitCost: number

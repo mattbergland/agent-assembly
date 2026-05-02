@@ -21,6 +21,7 @@ interface ExtractedData {
   name: string
   cost: number
   category: ItemCategory
+  brand?: string
 }
 
 type ImportState =
@@ -90,6 +91,8 @@ function readFileAsDataUrl(file: File): Promise<string> {
 export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
   const [state, setState] = useState<ImportState>({ step: 'paste' })
   const [editName, setEditName] = useState('')
+  const [editBrand, setEditBrand] = useState('')
+  const [editLink, setEditLink] = useState('')
   const [editCost, setEditCost] = useState('')
   const [editCategory, setEditCategory] = useState<ItemCategory>('custom')
   const [apiKey, setApiKey] = useState('')
@@ -134,9 +137,12 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
         name: json.name || '',
         cost: typeof json.cost === 'number' ? json.cost : parseFloat(json.cost) || 0,
         category: json.category || 'custom',
+        brand: json.brand || '',
       }
 
       setEditName(data.name)
+      setEditBrand(data.brand || '')
+      setEditLink('')
       setEditCost(data.cost > 0 ? String(data.cost) : '')
       setEditCategory(data.category)
       setState({ step: 'review', imageUrl: dataUrl, data })
@@ -202,6 +208,8 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
     const thumbnail = await resizeForThumbnail(state.imageUrl)
     onAdd({
       name: editName.trim(),
+      brand: editBrand.trim() || undefined,
+      link: editLink.trim() || undefined,
       unitCost: parseFloat(editCost) || 0,
       category: editCategory,
       imageUrl: thumbnail,
@@ -344,6 +352,22 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
             className="w-full px-2.5 py-1.5 text-sm bg-transparent border border-rule/10 rounded-md focus:outline-none focus:border-lavender/50 focus:ring-1 focus:ring-lavender/20 placeholder:text-ink-muted/50"
           />
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          value={editBrand}
+          onChange={e => setEditBrand(e.target.value)}
+          placeholder="Brand"
+          className="px-2.5 py-1.5 text-sm bg-transparent border border-rule/10 rounded-md focus:outline-none focus:border-lavender/50 focus:ring-1 focus:ring-lavender/20 placeholder:text-ink-muted/50"
+        />
+        <input
+          value={editLink}
+          onChange={e => setEditLink(e.target.value)}
+          placeholder="Link (URL)"
+          type="url"
+          className="px-2.5 py-1.5 text-sm bg-transparent border border-rule/10 rounded-md focus:outline-none focus:border-lavender/50 focus:ring-1 focus:ring-lavender/20 placeholder:text-ink-muted/50"
+        />
       </div>
 
       <div className="flex flex-wrap gap-1.5">

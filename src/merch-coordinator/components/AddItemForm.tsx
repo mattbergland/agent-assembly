@@ -45,6 +45,8 @@ function resizeImage(file: File, maxSize: number): Promise<string> {
 export function AddItemForm({ onAdd }: AddItemFormProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [name, setName] = useState('')
+  const [brand, setBrand] = useState('')
+  const [link, setLink] = useState('')
   const [category, setCategory] = useState<ItemCategory>('custom')
   const [cost, setCost] = useState('')
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -66,11 +68,15 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
     if (!name.trim()) return
     onAdd({
       name: name.trim(),
+      brand: brand.trim() || undefined,
+      link: link.trim() || undefined,
       imageUrl,
       category,
       unitCost: parseFloat(cost) || 0,
     })
     setName('')
+    setBrand('')
+    setLink('')
     setCost('')
     setImageUrl(null)
     setCategory('custom')
@@ -131,6 +137,23 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
         </div>
       </div>
 
+      {/* Brand + Link */}
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          value={brand}
+          onChange={e => setBrand(e.target.value)}
+          placeholder="Brand"
+          className="px-2.5 py-1.5 text-sm bg-transparent border border-rule/10 rounded-md focus:outline-none focus:border-lavender/50 focus:ring-1 focus:ring-lavender/20 placeholder:text-ink-muted/50"
+        />
+        <input
+          value={link}
+          onChange={e => setLink(e.target.value)}
+          placeholder="Link (URL)"
+          type="url"
+          className="px-2.5 py-1.5 text-sm bg-transparent border border-rule/10 rounded-md focus:outline-none focus:border-lavender/50 focus:ring-1 focus:ring-lavender/20 placeholder:text-ink-muted/50"
+        />
+      </div>
+
       {/* Category chips */}
       <div className="flex flex-wrap gap-1.5">
         {categories.map(c => (
@@ -160,7 +183,7 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
         </button>
         <button
           type="button"
-          onClick={() => { setIsOpen(false); setName(''); setCost(''); setImageUrl(null); setCategory('custom') }}
+          onClick={() => { setIsOpen(false); setName(''); setBrand(''); setLink(''); setCost(''); setImageUrl(null); setCategory('custom') }}
           className="px-3 py-1.5 text-xs text-ink-muted hover:text-ink transition-colors"
         >
           Cancel
