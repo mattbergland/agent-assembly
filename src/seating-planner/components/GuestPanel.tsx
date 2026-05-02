@@ -26,7 +26,7 @@ export function GuestPanel({ guests, unseatedGuests, onAdd, onAddMany, onUpdate,
   )
 
   return (
-    <div className="w-80 flex-shrink-0 flex flex-col h-full border-r border-rule/10 bg-paper overflow-hidden">
+    <div className="w-[340px] flex-shrink-0 flex flex-col h-full border-r border-rule/10 bg-paper overflow-hidden">
       <div className="p-4 space-y-4 border-b border-rule/10">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium tracking-tight text-ink">Guests</h2>
