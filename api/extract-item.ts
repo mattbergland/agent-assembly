@@ -12,6 +12,7 @@ interface ExtractedItem {
   cost: number
   category: 'apparel' | 'tech' | 'drinkware' | 'stationery' | 'food' | 'travel' | 'wellness' | 'bags' | 'accessories' | 'custom'
   brand?: string
+  crop?: { x: number; y: number; w: number; h: number }
 }
 
 export default async function handler(request: Request): Promise<Response> {
@@ -77,6 +78,7 @@ export default async function handler(request: Request): Promise<Response> {
 - "brand": the brand or company name (string, e.g. "Patagonia", "Nike"). If not visible, use ""
 - "cost": the unit price as a number (e.g. 29.99). If multiple prices, use the main/default one. If no price visible, use 0
 - "category": the single best match from: "apparel", "tech", "drinkware", "stationery", "food", "travel", "wellness", "bags", "accessories", or "custom"
+- "crop": the bounding box of the main product image as {"x": number, "y": number, "w": number, "h": number} where values are percentages (0-100) of the image dimensions. x,y is the top-left corner. If the whole image IS the product, use {"x": 0, "y": 0, "w": 100, "h": 100}
 
 Return ONLY the JSON object, no markdown, no explanation.`,
               },

@@ -4,6 +4,7 @@ import type { SwagItem, ItemCategory } from '../types'
 interface ScreenshotImportProps {
   onAdd: (item: Omit<SwagItem, 'id'>) => void
   onCancel: () => void
+  initialImage?: string | null
 }
 
 const API_KEY_STORAGE = 'merch-coordinator-openai-key'
@@ -21,17 +22,25 @@ const categories: { value: ItemCategory; label: string }[] = [
   { value: 'custom', label: 'Custom' },
 ]
 
+interface CropBox {
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
 interface ExtractedData {
   name: string
   cost: number
   category: ItemCategory
   brand?: string
+  crop?: CropBox
 }
 
 type ImportState =
   | { step: 'paste' }
   | { step: 'processing'; imageUrl: string }
-  | { step: 'review'; imageUrl: string; data: ExtractedData }
+  | { step: 'review'; imageUrl: string; croppedUrl: string; data: ExtractedData }
   | { step: 'error'; message: string; imageUrl?: string }
   | { step: 'api_key'; imageUrl?: string }
 
@@ -59,23 +68,30 @@ function resizeForAI(dataUrl: string): Promise<string> {
   })
 }
 
-function resizeForThumbnail(dataUrl: string): Promise<string> {
+function cropAndResize(dataUrl: string, crop: CropBox | undefined, maxSize: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.onload = () => {
       const canvas = document.createElement('canvas')
-      const maxSize = 200
-      let w = img.width
-      let h = img.height
-      if (w > maxSize || h > maxSize) {
-        if (w > h) { h = (h / w) * maxSize; w = maxSize }
-        else { w = (w / h) * maxSize; h = maxSize }
-      }
-      canvas.width = w
-      canvas.height = h
       const ctx = canvas.getContext('2d')
       if (!ctx) { reject(new Error('Canvas not supported')); return }
-      ctx.drawImage(img, 0, 0, w, h)
+
+      let sx = 0, sy = 0, sw = img.width, sh = img.height
+      if (crop && !(crop.x === 0 && crop.y === 0 && crop.w === 100 && crop.h === 100)) {
+        sx = Math.round(img.width * crop.x / 100)
+        sy = Math.round(img.height * crop.y / 100)
+        sw = Math.round(img.width * crop.w / 100)
+        sh = Math.round(img.height * crop.h / 100)
+      }
+
+      let dw = sw, dh = sh
+      if (dw > maxSize || dh > maxSize) {
+        if (dw > dh) { dh = (dh / dw) * maxSize; dw = maxSize }
+        else { dw = (dw / dh) * maxSize; dh = maxSize }
+      }
+      canvas.width = dw
+      canvas.height = dh
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, dw, dh)
       resolve(canvas.toDataURL('image/jpeg', 0.8))
     }
     img.onerror = reject
@@ -92,8 +108,9 @@ function readFileAsDataUrl(file: File): Promise<string> {
   })
 }
 
-export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
+export function ScreenshotImport({ onAdd, onCancel, initialImage }: ScreenshotImportProps) {
   const [state, setState] = useState<ImportState>({ step: 'paste' })
+  const [initialProcessed, setInitialProcessed] = useState(false)
   const [editName, setEditName] = useState('')
   const [editBrand, setEditBrand] = useState('')
   const [editLink, setEditLink] = useState('')
@@ -137,23 +154,41 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
         return
       }
 
+      const crop: CropBox | undefined = json.crop && typeof json.crop === 'object'
+        ? { x: json.crop.x ?? 0, y: json.crop.y ?? 0, w: json.crop.w ?? 100, h: json.crop.h ?? 100 }
+        : undefined
+
       const data: ExtractedData = {
         name: json.name || '',
         cost: typeof json.cost === 'number' ? json.cost : parseFloat(json.cost) || 0,
         category: json.category || 'custom',
         brand: json.brand || '',
+        crop,
       }
+
+      let croppedUrl = dataUrl
+      try {
+        croppedUrl = await cropAndResize(dataUrl, crop, 400)
+      } catch { /* fall back to full image */ }
 
       setEditName(data.name)
       setEditBrand(data.brand || '')
       setEditLink('')
       setEditCost(data.cost > 0 ? String(data.cost) : '')
       setEditCategory(data.category)
-      setState({ step: 'review', imageUrl: dataUrl, data })
+      setState({ step: 'review', imageUrl: dataUrl, croppedUrl, data })
     } catch {
       setState({ step: 'error', message: 'Network error — check your connection', imageUrl: dataUrl })
     }
   }, [])
+
+  // Auto-process if an initial image was provided (drag-drop onto panel)
+  useEffect(() => {
+    if (initialImage && !initialProcessed) {
+      setInitialProcessed(true)
+      processScreenshot(initialImage)
+    }
+  }, [initialImage, initialProcessed, processScreenshot])
 
   // Handle clipboard paste
   useEffect(() => {
@@ -180,6 +215,7 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     setIsDragOver(false)
     if (state.step !== 'paste') return
     const file = e.dataTransfer.files[0]
@@ -209,7 +245,7 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
 
   const handleConfirm = async () => {
     if (state.step !== 'review' || !editName.trim()) return
-    const thumbnail = await resizeForThumbnail(state.imageUrl)
+    const thumbnail = await cropAndResize(state.croppedUrl, undefined, 200)
     onAdd({
       name: editName.trim(),
       brand: editBrand.trim() || undefined,
@@ -263,8 +299,8 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
       <div className="space-y-2">
         <div
           ref={dropRef}
-          onDragOver={e => { e.preventDefault(); setIsDragOver(true) }}
-          onDragLeave={() => setIsDragOver(false)}
+          onDragOver={e => { e.preventDefault(); e.stopPropagation(); setIsDragOver(true) }}
+          onDragLeave={e => { e.stopPropagation(); setIsDragOver(false) }}
           onDrop={handleDrop}
           className={`relative flex flex-col items-center justify-center gap-2 p-5 rounded-lg border-2 border-dashed transition-colors cursor-pointer ${
             isDragOver
@@ -336,7 +372,7 @@ export function ScreenshotImport({ onAdd, onCancel }: ScreenshotImportProps) {
     <div className="space-y-3 p-3 rounded-lg border border-lavender/20 bg-white">
       <div className="flex items-center gap-3">
         <div className="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-ink/[0.02]">
-          <img src={state.imageUrl} alt="Product" className="w-full h-full object-cover" />
+          <img src={state.croppedUrl} alt="Product" className="w-full h-full object-cover" />
         </div>
         <div className="flex-1 space-y-2">
           <input

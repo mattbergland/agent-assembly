@@ -5,16 +5,19 @@ import { useMerchStore } from "@/merch-coordinator/store";
 import { ItemPanel } from "@/merch-coordinator/components/ItemPanel";
 import { KitBuilder } from "@/merch-coordinator/components/KitBuilder";
 import { GuidedTutorial } from "@/merch-coordinator/components/GuidedTutorial";
+import { EditItemModal } from "@/merch-coordinator/components/EditItemModal";
 import { getDndBackend, getDndBackendOptions } from "@/lib/dnd-backend";
 import "../App.css";
 
 export default function MerchCoordinator() {
   const [showPanel, setShowPanel] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const {
     items,
     kits,
     activeKit,
     addItem,
+    updateItem,
     removeItem,
     newKit,
     setActiveKit,
@@ -27,6 +30,8 @@ export default function MerchCoordinator() {
     clearAll,
     getKitCost,
   } = useMerchStore();
+
+  const editingItem = editingItemId ? items.find(i => i.id === editingItemId) ?? null : null;
 
   const backend = getDndBackend();
   const backendOptions = getDndBackendOptions();
@@ -65,6 +70,7 @@ export default function MerchCoordinator() {
               items={items}
               onAdd={addItem}
               onRemove={removeItem}
+              onEdit={(id: string) => setEditingItemId(id)}
               activeKit={activeKit}
               onAddItemToKit={activeKit ? (itemId: string) => addItemToKit(activeKit.id, itemId) : undefined}
               onClose={() => setShowPanel(false)}
@@ -106,6 +112,14 @@ export default function MerchCoordinator() {
           Items{items.length > 0 ? ` (${items.length})` : ''}
         </button>
       </DndProvider>
+
+      {editingItem && (
+        <EditItemModal
+          item={editingItem}
+          onSave={(id, updates) => updateItem(id, updates)}
+          onClose={() => setEditingItemId(null)}
+        />
+      )}
     </ToolLayout>
   );
 }

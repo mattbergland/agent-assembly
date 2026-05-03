@@ -27,6 +27,7 @@ export interface Kit {
   note: string
   tier: RecipientTier
   recipientCount: number
+  budgetPerPerson?: number
   createdAt: number
 }
 
