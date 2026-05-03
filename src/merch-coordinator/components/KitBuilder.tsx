@@ -249,7 +249,7 @@ export function KitBuilder({
           tier={activeKit.tier}
         />
 
-        {/* Recipient count + cost summary */}
+        {/* Recipient count + budget + cost summary */}
         <div className="rounded-lg border border-rule/10 bg-white p-5 space-y-4">
           <div className="flex items-center justify-between">
             <label className="text-[11px] font-medium text-ink-muted uppercase tracking-wide">
@@ -278,11 +278,48 @@ export function KitBuilder({
             </div>
           </div>
 
+          {/* Budget target */}
+          <div className="flex items-center justify-between">
+            <label className="text-[11px] font-medium text-ink-muted uppercase tracking-wide">
+              Budget per person
+            </label>
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-ink-muted">$</span>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={activeKit.budgetPerPerson ?? ''}
+                onChange={e => {
+                  const val = e.target.value
+                  onUpdateKit(activeKit.id, { budgetPerPerson: val ? parseFloat(val) || 0 : undefined })
+                }}
+                placeholder="—"
+                className="w-20 text-right text-sm font-medium bg-transparent border border-rule/10 rounded-md py-1 px-2 focus:outline-none focus:border-lavender/50 placeholder:text-ink-muted/40"
+              />
+            </div>
+          </div>
+
           {activeKit.items.length > 0 && (
             <div className="pt-3 border-t border-rule/10 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-ink-muted">Cost per kit</span>
-                <span className="font-medium text-ink">${kitCost.toFixed(2)}</span>
+                <span className={`font-medium ${
+                  activeKit.budgetPerPerson != null && kitCost > activeKit.budgetPerPerson
+                    ? 'text-red-600'
+                    : 'text-ink'
+                }`}>
+                  ${kitCost.toFixed(2)}
+                  {activeKit.budgetPerPerson != null && (
+                    <span className={`text-[10px] ml-1 ${
+                      kitCost > activeKit.budgetPerPerson ? 'text-red-500' : 'text-emerald-600'
+                    }`}>
+                      {kitCost > activeKit.budgetPerPerson
+                        ? `$${(kitCost - activeKit.budgetPerPerson).toFixed(2)} over`
+                        : `$${(activeKit.budgetPerPerson - kitCost).toFixed(2)} under`}
+                    </span>
+                  )}
+                </span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-ink-muted">
