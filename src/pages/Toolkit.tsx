@@ -45,6 +45,14 @@ const toolkitItems: ToolkitItem[] = [
     to: "/toolkit/merch-coordinator",
   },
   {
+    id: "booth-designer",
+    title: "Booth Designer",
+    description:
+      "Design booth layouts with a drag-and-drop floor planner. Place tables, monitors, banners, and more — then preview in 3D.",
+    icon: <BoothDesignerIcon />,
+    to: "/toolkit/booth-designer",
+  },
+  {
     id: "featured-venues",
     title: "Featured Venues",
     description:
@@ -290,6 +298,27 @@ function MerchCoordinatorIcon() {
       <line x1="12" y1="22" x2="12" y2="7" />
       <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
       <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+    </svg>
+  );
+}
+
+function BoothDesignerIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M3 9h18" />
+      <path d="M9 21V9" />
+      <rect x="12" y="12" width="6" height="4" rx="0.5" />
+      <rect x="12" y="18" width="3" height="2" rx="0.5" opacity="0.5" />
     </svg>
   );
 }
