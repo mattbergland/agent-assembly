@@ -45,6 +45,14 @@ const toolkitItems: ToolkitItem[] = [
     to: "/toolkit/merch-coordinator",
   },
   {
+    id: "dom-tagger",
+    title: "DOM Tagger",
+    description:
+      "A Chrome extension that lets you inspect, tag, and annotate DOM elements — then copy structured references for Devin to make precise frontend tweaks.",
+    icon: <DomTaggerIcon />,
+    to: "/toolkit/dom-tagger",
+  },
+  {
     id: "featured-venues",
     title: "Featured Venues",
     description:
@@ -290,6 +298,25 @@ function MerchCoordinatorIcon() {
       <line x1="12" y1="22" x2="12" y2="7" />
       <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
       <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+    </svg>
+  );
+}
+
+function DomTaggerIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
     </svg>
   );
 }
