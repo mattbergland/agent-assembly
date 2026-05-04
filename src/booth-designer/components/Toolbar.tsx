@@ -66,7 +66,7 @@ export function Toolbar({
   }
 
   return (
-    <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-white border-b border-rule/10 flex-wrap">
+    <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-white border-b border-rule/10 flex-wrap overflow-visible">
       {/* Room shape */}
       <button
         onClick={() => { closeMenus(); onShowRoomShape() }}

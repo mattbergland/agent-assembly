@@ -1,8 +1,10 @@
-import type { BoothShape } from '../types'
+import { useState } from 'react'
+import type { BoothShape, WallSegment } from '../types'
 
 interface RoomShapeSelectorProps {
   currentShape: BoothShape
-  onSelect: (shape: BoothShape, width: number, depth: number) => void
+  walls: WallSegment[]
+  onSelect: (shape: BoothShape, width: number, depth: number, walls: WallSegment[]) => void
   onClose: () => void
 }
 
@@ -12,6 +14,7 @@ interface ShapeOption {
   description: string
   defaultWidth: number
   defaultDepth: number
+  defaultWalls: Record<string, boolean>
 }
 
 const SHAPES: ShapeOption[] = [
@@ -21,6 +24,7 @@ const SHAPES: ShapeOption[] = [
     description: 'Standard linear booth with back wall and two sides. Most common 10×10 or 10×20 configuration.',
     defaultWidth: 120,
     defaultDepth: 120,
+    defaultWalls: { top: false, right: true, bottom: true, left: true },
   },
   {
     shape: 'island',
@@ -28,6 +32,7 @@ const SHAPES: ShapeOption[] = [
     description: 'Open on all sides. Premium placement for maximum visibility and traffic flow.',
     defaultWidth: 240,
     defaultDepth: 240,
+    defaultWalls: { top: false, right: false, bottom: false, left: false },
   },
   {
     shape: 'peninsula',
@@ -35,6 +40,7 @@ const SHAPES: ShapeOption[] = [
     description: 'Open on three sides with one back wall. Great for end-of-row positions.',
     defaultWidth: 240,
     defaultDepth: 120,
+    defaultWalls: { top: false, right: false, bottom: true, left: false },
   },
   {
     shape: 'l-shape',
@@ -42,6 +48,7 @@ const SHAPES: ShapeOption[] = [
     description: 'Wraps around a corner with two open sides. Good for creating distinct zones.',
     defaultWidth: 240,
     defaultDepth: 240,
+    defaultWalls: { top: false, right: false, bottom: true, left: true },
   },
   {
     shape: 'u-shape',
@@ -49,6 +56,7 @@ const SHAPES: ShapeOption[] = [
     description: 'Open on one side only with walls on three sides. Maximizes wall display space.',
     defaultWidth: 240,
     defaultDepth: 120,
+    defaultWalls: { top: false, right: true, bottom: true, left: true },
   },
 ]
 
@@ -128,40 +136,143 @@ function ShapeThumbnail({ shape, isSelected }: { shape: BoothShape; isSelected: 
   }
 }
 
-export function RoomShapeSelector({ currentShape, onSelect, onClose }: RoomShapeSelectorProps) {
+const SIDE_LABELS: Record<string, string> = {
+  top: 'Front',
+  right: 'Right',
+  bottom: 'Back',
+  left: 'Left',
+}
+
+function WallMiniDiagram({ walls }: { walls: Record<string, boolean> }) {
+  const s = 100
+  const pad = 16
+  const inner = s - 2 * pad
+
+  return (
+    <svg width={s} height={s} viewBox={`0 0 ${s} ${s}`}>
+      <rect x={pad} y={pad} width={inner} height={inner} fill="#F5F5F3" stroke="#E0DDD5" strokeWidth={1} rx={2} />
+      {/* Top / Front */}
+      <rect x={pad} y={pad - 3} width={inner} height={4} rx={1.5}
+        fill={walls.top ? '#3A3A38' : 'transparent'} stroke={walls.top ? 'none' : '#CCCAC2'} strokeWidth={1} strokeDasharray={walls.top ? 'none' : '3 2'} />
+      {/* Bottom / Back */}
+      <rect x={pad} y={pad + inner - 1} width={inner} height={4} rx={1.5}
+        fill={walls.bottom ? '#3A3A38' : 'transparent'} stroke={walls.bottom ? 'none' : '#CCCAC2'} strokeWidth={1} strokeDasharray={walls.bottom ? 'none' : '3 2'} />
+      {/* Left */}
+      <rect x={pad - 3} y={pad} width={4} height={inner} rx={1.5}
+        fill={walls.left ? '#3A3A38' : 'transparent'} stroke={walls.left ? 'none' : '#CCCAC2'} strokeWidth={1} strokeDasharray={walls.left ? 'none' : '3 2'} />
+      {/* Right */}
+      <rect x={pad + inner - 1} y={pad} width={4} height={inner} rx={1.5}
+        fill={walls.right ? '#3A3A38' : 'transparent'} stroke={walls.right ? 'none' : '#CCCAC2'} strokeWidth={1} strokeDasharray={walls.right ? 'none' : '3 2'} />
+      {/* Labels */}
+      <text x={s / 2} y={pad - 7} textAnchor="middle" fontSize={7} fill="#AAA8A0" fontFamily="Inter, sans-serif">FRONT</text>
+      <text x={s / 2} y={pad + inner + 14} textAnchor="middle" fontSize={7} fill="#AAA8A0" fontFamily="Inter, sans-serif">BACK</text>
+    </svg>
+  )
+}
+
+export function RoomShapeSelector({ currentShape, walls: currentWalls, onSelect, onClose }: RoomShapeSelectorProps) {
+  const [selectedShape, setSelectedShape] = useState<BoothShape>(currentShape)
+  const currentWallMap = Object.fromEntries(currentWalls.map(w => [w.side, w.hasWall]))
+  const shapeOpt = SHAPES.find(s => s.shape === selectedShape)
+  const [wallConfig, setWallConfig] = useState<Record<string, boolean>>(currentWallMap)
+
+  const handleShapeClick = (opt: ShapeOption) => {
+    setSelectedShape(opt.shape)
+    setWallConfig(opt.defaultWalls)
+  }
+
+  const toggleWallSide = (side: string) => {
+    setWallConfig(prev => ({ ...prev, [side]: !prev[side] }))
+  }
+
+  const handleApply = () => {
+    const opt = SHAPES.find(s => s.shape === selectedShape)!
+    const newWalls: WallSegment[] = (['top', 'right', 'bottom', 'left'] as const).map(side => ({
+      id: `wall-${side}`,
+      side,
+      hasWall: wallConfig[side] ?? false,
+    }))
+    onSelect(selectedShape, opt.defaultWidth, opt.defaultDepth, newWalls)
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl border border-rule/10 w-full max-w-2xl mx-4 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xl border border-rule/10 w-full max-w-3xl mx-4 overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-rule/10">
           <div>
-            <h2 className="text-lg font-medium text-ink tracking-tight">Booth Shape</h2>
-            <p className="text-xs text-ink-muted mt-0.5">Select the layout that matches your booth assignment.</p>
+            <h2 className="text-lg font-medium text-ink tracking-tight">Booth Shape & Walls</h2>
+            <p className="text-xs text-ink-muted mt-0.5">Select your booth layout, then configure which sides have walls.</p>
           </div>
           <button onClick={onClose} className="text-ink-muted hover:text-ink transition-colors">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
           </button>
         </div>
 
-        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {SHAPES.map(opt => (
-            <button
-              key={opt.shape}
-              onClick={() => onSelect(opt.shape, opt.defaultWidth, opt.defaultDepth)}
-              className={`flex flex-col items-center text-left p-4 rounded-lg border transition-all ${
-                currentShape === opt.shape
-                  ? 'border-lavender bg-lavender/[0.06] shadow-sm'
-                  : 'border-rule/10 hover:border-lavender/30 hover:bg-paper'
-              }`}
-            >
-              <ShapeThumbnail shape={opt.shape} isSelected={currentShape === opt.shape} />
-              <h3 className={`text-sm font-medium mt-3 ${currentShape === opt.shape ? 'text-lavender' : 'text-ink'}`}>
-                {opt.label}
-              </h3>
-              <p className="text-[11px] text-ink-muted leading-relaxed mt-1 text-center">
-                {opt.description}
-              </p>
-            </button>
-          ))}
+        {/* Shape selector */}
+        <div className="p-6 pb-0">
+          <p className="text-[10px] text-ink-muted uppercase tracking-wide mb-3">Booth Layout</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {SHAPES.map(opt => (
+              <button
+                key={opt.shape}
+                onClick={() => handleShapeClick(opt)}
+                className={`flex flex-col items-center text-left p-3 rounded-lg border transition-all ${
+                  selectedShape === opt.shape
+                    ? 'border-lavender bg-lavender/[0.06] shadow-sm'
+                    : 'border-rule/10 hover:border-lavender/30 hover:bg-paper'
+                }`}
+              >
+                <ShapeThumbnail shape={opt.shape} isSelected={selectedShape === opt.shape} />
+                <h3 className={`text-xs font-medium mt-2 ${selectedShape === opt.shape ? 'text-lavender' : 'text-ink'}`}>
+                  {opt.label}
+                </h3>
+              </button>
+            ))}
+          </div>
+          {shapeOpt && (
+            <p className="text-[11px] text-ink-muted mt-2">{shapeOpt.description}</p>
+          )}
+        </div>
+
+        {/* Wall configuration */}
+        <div className="p-6">
+          <p className="text-[10px] text-ink-muted uppercase tracking-wide mb-3">Wall Configuration</p>
+          <div className="flex items-start gap-6">
+            <WallMiniDiagram walls={wallConfig} />
+            <div className="flex-1 grid grid-cols-2 gap-2">
+              {(['top', 'right', 'bottom', 'left'] as const).map(side => (
+                <button
+                  key={side}
+                  onClick={() => toggleWallSide(side)}
+                  className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all text-xs ${
+                    wallConfig[side]
+                      ? 'border-ink/20 bg-ink/[0.04]'
+                      : 'border-rule/10 hover:border-lavender/30'
+                  }`}
+                >
+                  <span className="font-medium text-ink">{SIDE_LABELS[side]} wall</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                    wallConfig[side]
+                      ? 'bg-ink/10 text-ink'
+                      : 'bg-lavender/10 text-lavender'
+                  }`}>
+                    {wallConfig[side] ? 'Wall' : 'Open'}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <p className="text-[10px] text-ink-muted mt-3">Open sides face the aisle. Click a side to toggle between wall and open.</p>
+        </div>
+
+        {/* Apply button */}
+        <div className="px-6 pb-5 flex justify-end">
+          <button
+            onClick={handleApply}
+            className="px-5 py-2 text-sm font-medium bg-lavender text-white rounded-lg hover:bg-lavender/90 transition-colors shadow-sm"
+          >
+            Apply Layout
+          </button>
         </div>
       </div>
     </div>

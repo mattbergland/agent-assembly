@@ -44,6 +44,7 @@ export function BoothCanvas({
   const panOrigin = useRef({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
   const lastTouchDist = useRef(0)
+  const spaceHeld = useRef(false)
 
   const pxPerInch = 4 * zoom
   const boothW = config.width * 4
@@ -61,7 +62,7 @@ export function BoothCanvas({
     setPan({ x: 0, y: 0 })
   }, [config.width, config.depth, boothW, boothH])
 
-  // Wheel zoom
+  // Wheel zoom (Ctrl+wheel) and scroll-to-pan (plain wheel)
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -70,14 +71,34 @@ export function BoothCanvas({
         e.preventDefault()
         const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP
         setZoom(z => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z + delta)))
+      } else {
+        e.preventDefault()
+        setPan(p => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }))
       }
     }
     el.addEventListener('wheel', handler, { passive: false })
     return () => el.removeEventListener('wheel', handler)
   }, [])
 
+  // Space key for pan mode
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
+        e.preventDefault()
+        spaceHeld.current = true
+      }
+    }
+    const up = (e: KeyboardEvent) => {
+      if (e.code === 'Space') spaceHeld.current = false
+    }
+    window.addEventListener('keydown', down)
+    window.addEventListener('keyup', up)
+    return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up) }
+  }, [])
+
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button === 1 || (e.button === 0 && e.altKey)) {
+    // Pan with middle-click, alt+click, or space+click
+    if (e.button === 1 || (e.button === 0 && (e.altKey || spaceHeld.current))) {
       e.preventDefault()
       setIsPanning(true)
       panStart.current = { x: e.clientX, y: e.clientY }
@@ -243,7 +264,7 @@ export function BoothCanvas({
   return (
     <div
       ref={containerRef}
-      className={`flex-1 min-w-0 h-full overflow-hidden bg-[#FAFAF8] relative select-none ${isPanning ? 'cursor-grabbing' : 'cursor-default'}`}
+      className={`flex-1 min-w-0 h-full overflow-hidden bg-[#FAFAF8] relative select-none ${isPanning ? 'cursor-grabbing' : spaceHeld.current ? 'cursor-grab' : 'cursor-default'}`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -262,7 +283,7 @@ export function BoothCanvas({
         <svg
           width={boothW * zoom + 80}
           height={boothH * zoom + 80}
-          viewBox={`${-40} ${-40} ${boothW + 80} ${boothH + 80}`}
+          viewBox={`${-60} ${-60} ${boothW + 120} ${boothH + 120}`}
           style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}
           data-canvas="bg"
         >

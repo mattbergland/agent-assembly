@@ -1,3 +1,4 @@
+import { useState, useCallback, useRef, useEffect } from 'react'
 import type { BoothConfig, PlacedElement } from '../types'
 
 interface WalkthroughViewProps {
@@ -11,6 +12,43 @@ export function WalkthroughView({ config, elements, selectedId, onSelect }: Walk
   const bw = config.width
   const bd = config.depth
   const ch = config.ceilingHeight
+
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const [isPanning, setIsPanning] = useState(false)
+  const panStart = useRef({ x: 0, y: 0 })
+  const panOrigin = useRef({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => { setPan({ x: 0, y: 0 }) }, [config.width, config.depth])
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button === 0 || e.button === 1) {
+      setIsPanning(true)
+      panStart.current = { x: e.clientX, y: e.clientY }
+      panOrigin.current = { ...pan }
+    }
+  }, [pan])
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isPanning) return
+    setPan({
+      x: panOrigin.current.x + (e.clientX - panStart.current.x),
+      y: panOrigin.current.y + (e.clientY - panStart.current.y),
+    })
+  }, [isPanning])
+
+  const handleMouseUp = useCallback(() => setIsPanning(false), [])
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const handler = (e: WheelEvent) => {
+      e.preventDefault()
+      setPan(p => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }))
+    }
+    el.addEventListener('wheel', handler, { passive: false })
+    return () => el.removeEventListener('wheel', handler)
+  }, [])
 
   // Perspective rendering — view from front of booth looking in
   const viewW = 900
@@ -49,9 +87,18 @@ export function WalkthroughView({ config, elements, selectedId, onSelect }: Walk
 
   return (
     <div
-      className="flex-1 min-w-0 h-full overflow-auto bg-gradient-to-b from-[#E8E6DE] to-[#F0EDE4] flex items-center justify-center relative"
-      onClick={() => onSelect(null)}
+      ref={containerRef}
+      className={`flex-1 min-w-0 h-full overflow-hidden bg-gradient-to-b from-[#E8E6DE] to-[#F0EDE4] flex items-center justify-center relative select-none ${isPanning ? 'cursor-grabbing' : 'cursor-grab'}`}
+      onClick={() => { if (!isPanning) onSelect(null) }}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
     >
+      <div
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ transform: `translate(${pan.x}px, ${pan.y}px)` }}
+      >
       <svg width={viewW} height={viewH} viewBox={`0 0 ${viewW} ${viewH}`}>
         {/* Sky gradient */}
         <defs>
@@ -183,6 +230,7 @@ export function WalkthroughView({ config, elements, selectedId, onSelect }: Walk
           ATTENDEE VIEW
         </text>
       </svg>
+      </div>
 
       {/* View label */}
       <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-md px-3 py-1.5 border border-rule/10 shadow-sm z-10">

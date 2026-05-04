@@ -14,7 +14,7 @@ import { Tutorial } from '@/booth-designer/components/Tutorial'
 import { RoomShapeSelector } from '@/booth-designer/components/RoomShapeSelector'
 import { HelpCenter } from '@/booth-designer/components/HelpCenter'
 import { OpeningsPanel } from '@/booth-designer/components/OpeningsPanel'
-import type { BoothShape } from '@/booth-designer/types'
+import type { BoothShape, WallSegment } from '@/booth-designer/types'
 import '../App.css'
 
 export default function BoothDesigner() {
@@ -99,8 +99,8 @@ export default function BoothDesigner() {
 
   const selectedElement = activeProject?.elements.find(el => el.id === selectedId) ?? null
 
-  const handleRoomShapeSelect = (shape: BoothShape, width: number, depth: number) => {
-    updateConfig({ shape, width, depth })
+  const handleRoomShapeSelect = (shape: BoothShape, width: number, depth: number, walls: WallSegment[]) => {
+    updateConfig({ shape, width, depth, walls })
     setShowRoomShape(false)
   }
 
@@ -143,6 +143,7 @@ export default function BoothDesigner() {
       {showRoomShape && activeProject && (
         <RoomShapeSelector
           currentShape={activeProject.config.shape}
+          walls={activeProject.config.walls}
           onSelect={handleRoomShapeSelect}
           onClose={() => setShowRoomShape(false)}
         />

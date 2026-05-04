@@ -1,3 +1,4 @@
+import { useState, useCallback, useRef, useEffect } from 'react'
 import type { BoothConfig, PlacedElement } from '../types'
 
 interface ThreeDViewProps {
@@ -23,11 +24,51 @@ export function ThreeDView({ config, elements, selectedId, onSelect }: ThreeDVie
   const bd = config.depth
   const ch = config.ceilingHeight * WALL_HEIGHT_SCALE
 
-  const viewW = (bw + bd) * Math.cos(ISO_ANGLE) * SCALE + 200
-  const viewH = (bw + bd) * Math.sin(ISO_ANGLE) * SCALE + ch * SCALE + 200
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const [isPanning, setIsPanning] = useState(false)
+  const panStart = useRef({ x: 0, y: 0 })
+  const panOrigin = useRef({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const padding = 300
+  const viewW = (bw + bd) * Math.cos(ISO_ANGLE) * SCALE + padding
+  const viewH = (bw + bd) * Math.sin(ISO_ANGLE) * SCALE + ch * SCALE + padding
 
   const offsetX = viewW / 2
-  const offsetY = viewH * 0.75
+  const offsetY = viewH * 0.7
+
+  // Reset pan when config changes
+  useEffect(() => { setPan({ x: 0, y: 0 }) }, [config.width, config.depth])
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button === 0 || e.button === 1) {
+      setIsPanning(true)
+      panStart.current = { x: e.clientX, y: e.clientY }
+      panOrigin.current = { ...pan }
+    }
+  }, [pan])
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isPanning) return
+    setPan({
+      x: panOrigin.current.x + (e.clientX - panStart.current.x),
+      y: panOrigin.current.y + (e.clientY - panStart.current.y),
+    })
+  }, [isPanning])
+
+  const handleMouseUp = useCallback(() => setIsPanning(false), [])
+
+  // Scroll to pan
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const handler = (e: WheelEvent) => {
+      e.preventDefault()
+      setPan(p => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }))
+    }
+    el.addEventListener('wheel', handler, { passive: false })
+    return () => el.removeEventListener('wheel', handler)
+  }, [])
 
   function iso(x: number, y: number, z: number) {
     const p = toIso(x, y, z)
@@ -172,9 +213,19 @@ export function ThreeDView({ config, elements, selectedId, onSelect }: ThreeDVie
   })
 
   return (
-    <div className="flex-1 min-w-0 h-full overflow-auto bg-[#FAFAF8] flex items-center justify-center relative"
-      onClick={() => onSelect(null)}
+    <div
+      ref={containerRef}
+      className={`flex-1 min-w-0 h-full overflow-hidden bg-[#FAFAF8] flex items-center justify-center relative select-none ${isPanning ? 'cursor-grabbing' : 'cursor-grab'}`}
+      onClick={() => { if (!isPanning) onSelect(null) }}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
     >
+      <div
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ transform: `translate(${pan.x}px, ${pan.y}px)` }}
+      >
       <svg width={viewW} height={viewH} viewBox={`0 0 ${viewW} ${viewH}`}>
         {/* Floor */}
         <path d={floorPath} fill="#F0EDE4" stroke="#CCCAC2" strokeWidth={1} />
@@ -207,6 +258,7 @@ export function ThreeDView({ config, elements, selectedId, onSelect }: ThreeDVie
           )
         })()}
       </svg>
+      </div>
 
       {/* View label */}
       <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-md px-3 py-1.5 border border-rule/10 shadow-sm z-10">
