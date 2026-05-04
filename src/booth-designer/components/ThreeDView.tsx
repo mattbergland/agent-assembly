@@ -172,7 +172,7 @@ export function ThreeDView({ config, elements, selectedId, onSelect }: ThreeDVie
   })
 
   return (
-    <div className="flex-1 min-w-0 h-full overflow-auto bg-[#FAFAF8] flex items-center justify-center"
+    <div className="flex-1 min-w-0 h-full overflow-auto bg-[#FAFAF8] flex items-center justify-center relative"
       onClick={() => onSelect(null)}
     >
       <svg width={viewW} height={viewH} viewBox={`0 0 ${viewW} ${viewH}`}>

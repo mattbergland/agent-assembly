@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { BoothConfig } from '../types'
 import { BOOTH_PRESETS } from '../constants'
 
@@ -43,6 +43,11 @@ export function Toolbar({
   const [showWallMenu, setShowWallMenu] = useState(false)
   const [customW, setCustomW] = useState(String(config.width / 12))
   const [customD, setCustomD] = useState(String(config.depth / 12))
+
+  useEffect(() => {
+    setCustomW(String(config.width / 12))
+    setCustomD(String(config.depth / 12))
+  }, [config.width, config.depth])
 
   const closeMenus = () => { setShowBoothMenu(false); setShowWallMenu(false) }
 
