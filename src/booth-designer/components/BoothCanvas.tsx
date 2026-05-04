@@ -266,10 +266,26 @@ export function BoothCanvas({
           style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}
           data-canvas="bg"
         >
+          {/* Wood grain floor texture */}
+          <defs>
+            <pattern id="woodGrain" x="0" y="0" width="48" height="200" patternUnits="userSpaceOnUse">
+              <rect width="48" height="200" fill="#E8E2D4" />
+              <rect x="0" y="0" width="48" height="200" fill="#EDE7D9" opacity="0.3" />
+              <line x1="0" y1="12" x2="48" y2="12" stroke="#DDD7C9" strokeWidth="0.4" />
+              <line x1="0" y1="38" x2="48" y2="38" stroke="#D8D2C4" strokeWidth="0.3" />
+              <line x1="0" y1="65" x2="48" y2="65" stroke="#DDD7C9" strokeWidth="0.3" />
+              <line x1="0" y1="95" x2="48" y2="95" stroke="#D8D2C4" strokeWidth="0.4" />
+              <line x1="0" y1="120" x2="48" y2="120" stroke="#DDD7C9" strokeWidth="0.3" />
+              <line x1="0" y1="148" x2="48" y2="148" stroke="#D8D2C4" strokeWidth="0.3" />
+              <line x1="0" y1="175" x2="48" y2="175" stroke="#DDD7C9" strokeWidth="0.4" />
+              <line x1="24" y1="0" x2="24" y2="200" stroke="#E0DACC" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+
           {/* Floor */}
           <rect
             x={0} y={0} width={boothW} height={boothH}
-            fill="#F0EDE4"
+            fill="url(#woodGrain)"
             stroke="#CCCAC2"
             strokeWidth={1.5}
             rx={2}
@@ -355,7 +371,7 @@ export function BoothCanvas({
       </div>
 
       {/* View label */}
-      <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-md px-3 py-1.5 border border-rule/10 shadow-sm z-10">
+      <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-md px-3 py-1.5 border border-rule/10 shadow-sm z-10">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E7DBE" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></svg>
         <span className="text-xs text-ink-muted font-medium">Floor View</span>
       </div>

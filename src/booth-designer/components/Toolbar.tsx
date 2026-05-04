@@ -1,20 +1,21 @@
 import { useState } from 'react'
-import type { BoothConfig, ViewMode } from '../types'
+import type { BoothConfig } from '../types'
 import { BOOTH_PRESETS } from '../constants'
 
 interface ToolbarProps {
   config: BoothConfig
-  viewMode: ViewMode
   totalBudget: number
   canUndo: boolean
   canRedo: boolean
   elementCount: number
   onUpdateConfig: (partial: Partial<BoothConfig>) => void
   onToggleWall: (side: 'top' | 'right' | 'bottom' | 'left') => void
-  onSetViewMode: (mode: ViewMode) => void
   onUndo: () => void
   onRedo: () => void
   onClear: () => void
+  onShowRoomShape: () => void
+  onShowOpenings: () => void
+  onShowHelp: () => void
 }
 
 function formatDim(inches: number): string {
@@ -25,22 +26,25 @@ function formatDim(inches: number): string {
 
 export function Toolbar({
   config,
-  viewMode,
   totalBudget,
   canUndo,
   canRedo,
   elementCount,
   onUpdateConfig,
   onToggleWall,
-  onSetViewMode,
   onUndo,
   onRedo,
   onClear,
+  onShowRoomShape,
+  onShowOpenings,
+  onShowHelp,
 }: ToolbarProps) {
   const [showBoothMenu, setShowBoothMenu] = useState(false)
   const [showWallMenu, setShowWallMenu] = useState(false)
   const [customW, setCustomW] = useState(String(config.width / 12))
   const [customD, setCustomD] = useState(String(config.depth / 12))
+
+  const closeMenus = () => { setShowBoothMenu(false); setShowWallMenu(false) }
 
   const applyPreset = (w: number, d: number) => {
     onUpdateConfig({ width: w, depth: d })
@@ -58,14 +62,27 @@ export function Toolbar({
 
   return (
     <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-white border-b border-rule/10 flex-wrap">
+      {/* Room shape */}
+      <button
+        onClick={() => { closeMenus(); onShowRoomShape() }}
+        className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md border border-rule/10 hover:border-lavender/30 transition-colors"
+        title="Room shape"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></svg>
+        <span className="hidden sm:inline">Room shape</span>
+      </button>
+
       {/* Booth size selector */}
       <div className="relative">
         <button
           onClick={() => { setShowBoothMenu(!showBoothMenu); setShowWallMenu(false) }}
           className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md border border-rule/10 hover:border-lavender/30 transition-colors"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
-          <span className="hidden sm:inline">Booth Size</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 3H3v18h18V3z" />
+            <path d="M3 12h18" />
+          </svg>
+          <span className="hidden sm:inline">Define space</span>
           <span className="font-mono text-ink-muted">{formatDim(config.width)} × {formatDim(config.depth)}</span>
         </button>
 
@@ -112,9 +129,6 @@ export function Toolbar({
         )}
       </div>
 
-      {/* Divider */}
-      <div className="w-px h-5 bg-rule/10" />
-
       {/* Wall toggles */}
       <div className="relative">
         <button
@@ -150,6 +164,21 @@ export function Toolbar({
         )}
       </div>
 
+      {/* Openings */}
+      <button
+        onClick={() => { closeMenus(); onShowOpenings() }}
+        className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md border border-rule/10 hover:border-lavender/30 transition-colors"
+        title="Openings"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M13 4h3a2 2 0 0 1 2 2v14" />
+          <path d="M2 20h3M13 20h9" />
+          <path d="M10 12v.01" />
+          <path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561z" />
+        </svg>
+        <span className="hidden sm:inline">Openings</span>
+      </button>
+
       {/* Ceiling height */}
       <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 text-xs border border-rule/10 rounded-md">
         <span className="text-ink-muted">Height</span>
@@ -161,29 +190,6 @@ export function Toolbar({
           min={60} max={192}
         />
         <span className="text-ink-muted">"</span>
-      </div>
-
-      {/* Divider */}
-      <div className="w-px h-5 bg-rule/10" />
-
-      {/* View toggle */}
-      <div className="flex items-center bg-paper rounded-md p-0.5">
-        <button
-          onClick={() => onSetViewMode('floor')}
-          className={`px-2.5 py-1 text-xs rounded transition-colors ${
-            viewMode === 'floor' ? 'bg-white shadow-sm text-ink font-medium' : 'text-ink-muted hover:text-ink'
-          }`}
-        >
-          2D
-        </button>
-        <button
-          onClick={() => onSetViewMode('3d')}
-          className={`px-2.5 py-1 text-xs rounded transition-colors ${
-            viewMode === '3d' ? 'bg-white shadow-sm text-ink font-medium' : 'text-ink-muted hover:text-ink'
-          }`}
-        >
-          3D
-        </button>
       </div>
 
       {/* Divider */}
@@ -207,10 +213,19 @@ export function Toolbar({
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></svg>
       </button>
 
+      {/* Help center */}
+      <button
+        onClick={() => { closeMenus(); onShowHelp() }}
+        className="p-1.5 rounded-md text-ink-muted hover:text-lavender transition-colors"
+        title="Design Tips"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+      </button>
+
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Stats */}
+      {/* Stats + budget */}
       <div className="hidden sm:flex items-center gap-3 text-xs text-ink-muted">
         <span>{elementCount} item{elementCount !== 1 ? 's' : ''}</span>
         <span className="text-rule/20">|</span>

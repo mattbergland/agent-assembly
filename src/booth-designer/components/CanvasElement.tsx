@@ -49,8 +49,8 @@ export function CanvasElement({
       const scaleFactor = ctm ? ctm.a : scale
       const dx = (e.clientX - dragStart.current.mx) / scaleFactor
       const dy = (e.clientY - dragStart.current.my) / scaleFactor
-      let newX = dragStart.current.ex + dx / scale * scale
-      let newY = dragStart.current.ey + dy / scale * scale
+      let newX = dragStart.current.ex + dx / scale
+      let newY = dragStart.current.ey + dy / scale
       newX = Math.round(newX / GRID_SIZE) * GRID_SIZE
       newY = Math.round(newY / GRID_SIZE) * GRID_SIZE
       newX = Math.max(0, Math.min(boothWidth - element.width, newX))

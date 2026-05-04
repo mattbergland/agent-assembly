@@ -1,6 +1,6 @@
 export type BoothShape = 'rectangle' | 'l-shape' | 'u-shape' | 'island' | 'peninsula'
 
-export type ViewMode = 'floor' | '3d'
+export type ViewMode = 'floor' | '3d' | 'walkthrough' | 'itemlist'
 
 export type ElementCategory =
   | 'furniture'
