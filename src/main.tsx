@@ -7,6 +7,7 @@ import Toolkit from "./pages/Toolkit";
 import TemplateLibrary from "./pages/TemplateLibrary";
 import SeatArrangement from "./pages/SeatArrangement";
 import MerchCoordinator from "./pages/MerchCoordinator";
+import DomTagger from "./pages/DomTagger";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -17,6 +18,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/toolkit/templates" element={<TemplateLibrary />} />
         <Route path="/toolkit/seat-arrangement" element={<SeatArrangement />} />
         <Route path="/toolkit/merch-coordinator" element={<MerchCoordinator />} />
+        <Route path="/toolkit/dom-tagger" element={<DomTagger />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
