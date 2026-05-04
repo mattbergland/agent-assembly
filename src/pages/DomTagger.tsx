@@ -1,36 +1,11 @@
-import { Nav, Footer } from "@/components/Layout";
-import { Link } from "react-router-dom";
+import { ToolLayout } from "@/components/Layout";
 import "../App.css";
 
 export default function DomTagger() {
   return (
-    <div className="min-h-screen bg-paper text-ink font-sans antialiased flex flex-col">
-      <Nav />
-
+    <ToolLayout title="DOM Tagger">
       <main className="flex-1 px-6 md:px-10 pb-16">
-        <div className="max-w-4xl mx-auto">
-          {/* Back link */}
-          <div className="pt-6 pb-2">
-            <Link
-              to="/toolkit"
-              className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-lavender transition-colors"
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-              Back to Toolkit
-            </Link>
-          </div>
-
+        <div className="max-w-7xl mx-auto">
           {/* Hero */}
           <div className="pt-4 pb-10 max-w-2xl">
             <div className="flex items-center gap-2 mb-3">
@@ -189,8 +164,7 @@ Page: https://example.com/dashboard
         </div>
       </main>
 
-      <Footer />
-    </div>
+    </ToolLayout>
   );
 }
 
