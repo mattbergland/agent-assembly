@@ -50,7 +50,7 @@ const toolkitItems: ToolkitItem[] = [
     description:
       "Curated spaces for executive dinners, offsites, and large-format events — vetted and reviewed by event marketers.",
     icon: <FeaturedVenuesIcon />,
-    comingSoon: true,
+    to: "/toolkit/venues",
   },
   {
     id: "experience-library",
